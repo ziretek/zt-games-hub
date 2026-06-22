@@ -1,7 +1,7 @@
-# Memory — Game Hub Project
+# Memory — ZT Games Hub
 
 ## Project Identity
-- **Name:** Game Hub (formerly mislabeled "Web Calculator")
+- **Name:** ZT Games Hub
 - **Type:** Single-page PWA game portal with 31 classic games
 - **Architecture:** Modular TypeScript (31 self-registering game modules), Vite-bundled, no backend
 - **Storage:** localStorage for high scores and game state
