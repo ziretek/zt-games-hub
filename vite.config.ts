@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const buildVersion = Date.now().toString(36);
+
 export default defineConfig({
   root: '.',
   build: {
@@ -55,13 +57,13 @@ export default defineConfig({
         categories: ['games', 'entertainment'],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
         runtimeCaching: [
           {
             urlPattern: /^https?:\/\/.*\/assets\/.*\.(js|css)$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'gamehub-assets-v3',
+              cacheName: `gamehub-assets-${buildVersion}`,
               expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
@@ -69,7 +71,7 @@ export default defineConfig({
             urlPattern: /^https?:\/\/.*\/index\.html$/i,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'gamehub-html-v3',
+              cacheName: `gamehub-html-${buildVersion}`,
             },
           },
         ],
