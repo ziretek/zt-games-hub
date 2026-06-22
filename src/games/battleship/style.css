@@ -1,0 +1,73 @@
+/* ====== Battleship ====== */
+#battleship-board {
+    display: flex;
+    gap: 20px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background: var(--glass);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(8px);
+}
+
+.bs-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.bs-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.bs-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+    gap: 1px;
+}
+
+.bs-cell {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    touch-action: manipulation;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.04);
+    transition: background 0.1s ease;
+    user-select: none;
+}
+
+.bs-cell:hover { background: rgba(255,255,255,0.08); }
+.bs-cell.bs-water { background: rgba(30, 60, 120, 0.3); }
+.bs-cell.bs-hit { background: rgba(255, 50, 50, 0.3); }
+.bs-cell.bs-hit::after { content: '✕'; color: #ff6b6b; font-weight: bold; font-size: 14px; }
+.bs-cell.bs-miss { background: rgba(255,255,255,0.04); }
+.bs-cell.bs-miss::after { content: '•'; color: rgba(255,255,255,0.25); font-size: 16px; }
+.bs-cell.bs-ship { background: rgba(100, 180, 255, 0.3); }
+.bs-cell.bs-sunk { background: rgba(255, 50, 50, 0.2); }
+.bs-cell.bs-sunk::after { content: '✕'; color: #ff6b6b; font-weight: bold; font-size: 14px; }
+.bs-cell.bs-placing { background: rgba(100, 255, 100, 0.2); }
+.bs-cell.bs-placing:hover { background: rgba(100, 255, 100, 0.35); }
+
+/* Responsive */
+@media (max-width: 720px) {
+    #battleship-board { flex-direction: column; gap: 12px; align-items: center; }
+    .bs-grid { grid-template-columns: repeat(10, 28px); grid-template-rows: repeat(10, 28px); }
+    .bs-cell { width: 28px; height: 28px; font-size: 10px; }
+}
+
+@media (max-width: 560px) {
+    .bs-grid { grid-template-columns: repeat(10, 26px); grid-template-rows: repeat(10, 26px); }
+    .bs-cell { width: 26px; height: 26px; font-size: 8px; }
+}
+
+@media (max-width: 380px) {
+    .bs-grid { grid-template-columns: repeat(10, 24px); grid-template-rows: repeat(10, 24px); }
+    .bs-cell { width: 24px; height: 24px; font-size: 7px; }
+}

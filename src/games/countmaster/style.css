@@ -1,0 +1,19 @@
+/* ====== Count Master ====== */
+#countmaster-canvas {
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    background: #0a0e27;
+    max-width: 100%;
+}
+
+@media (max-width: 720px) {
+    .countmaster-canvas, #countmaster-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 560px) {
+    #countmaster-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 380px) {
+    #countmaster-canvas { width: 100%; height: auto; }
+}

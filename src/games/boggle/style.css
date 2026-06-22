@@ -1,0 +1,19 @@
+/* ====== Boggle ====== */
+#boggle-canvas {
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    background: #1a1a2e;
+    max-width: 100%;
+}
+
+@media (max-width: 720px) {
+    .boggle-canvas, #boggle-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 560px) {
+    #boggle-word-input { width: 120px; }
+}
+
+@media (max-width: 380px) {
+    #boggle-word-input { width: 100px; }
+}

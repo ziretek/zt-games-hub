@@ -1,0 +1,91 @@
+/* ====== Mastermind ====== */
+#mastermind-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background: var(--glass);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(8px);
+}
+
+.mm-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+.mm-row.current { background: rgba(255,255,255,0.04); }
+
+.mm-slot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+}
+
+.mm-slot.empty { background: rgba(255,255,255,0.04); }
+.mm-slot.red { background: #e74c3c; border-color: #e74c3c; }
+.mm-slot.blue { background: #3498db; border-color: #3498db; }
+.mm-slot.green { background: #2ecc71; border-color: #2ecc71; }
+.mm-slot.yellow { background: #f1c40f; border-color: #f1c40f; }
+.mm-slot.purple { background: #9b59b6; border-color: #9b59b6; }
+.mm-slot.orange { background: #e67e22; border-color: #e67e22; }
+
+.mm-slot.peek { cursor: pointer; }
+.mm-slot.peek:hover { transform: scale(1.15); }
+
+.mm-feedback {
+    display: grid;
+    grid-template-columns: 10px 10px;
+    gap: 3px;
+    margin-left: 8px;
+}
+
+.mm-feed-peg {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+}
+
+.mm-feed-peg.black { background: #222; }
+.mm-feed-peg.white { background: #ddd; }
+
+.mm-palette {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+}
+
+.mm-palette-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: all 0.15s ease;
+}
+
+.mm-palette-btn:hover { transform: scale(1.2); border-color: rgba(255,255,255,0.3); }
+
+/* Responsive */
+@media (max-width: 720px) {
+    .mm-slot { width: 28px; height: 28px; }
+}
+
+@media (max-width: 560px) {
+    .mm-slot { width: 28px; height: 28px; }
+}
+
+@media (max-width: 380px) {
+    .mm-slot { width: 28px; height: 28px; }
+}

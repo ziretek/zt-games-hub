@@ -1,0 +1,90 @@
+/* ====== Memory Game-over ====== */
+.mem-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; border-radius: 8px; z-index: 10;
+}
+.mem-overlay-text { font-size: 24px; font-weight: bold; color: var(--gold); }
+.mem-overlay-info { font-size: 14px; color: var(--text); }
+.mem-overlay-btn {
+    padding: 8px 20px; border: none; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: var(--text); cursor: pointer; font-size: 13px; font-weight: 600;
+    transition: all var(--transition);
+}
+.mem-overlay-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.4); }
+
+/* ====== Memory ====== */
+#memory-board {
+    display: grid;
+    grid-template-columns: repeat(4, 92px);
+    grid-template-rows: repeat(4, 92px);
+    gap: 10px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background: var(--glass);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(8px);
+}
+
+.mem-card {
+    width: 92px; height: 92px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    perspective: 600px;
+}
+
+.mem-card-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    border-radius: var(--radius-sm);
+    transition: transform 0.4s ease;
+    transform-style: preserve-3d;
+}
+
+.mem-card.flipped .mem-card-inner { transform: rotateY(180deg); }
+
+.mem-card-front, .mem-card-back {
+    position: absolute;
+    width: 100%; height: 100%;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    backface-visibility: hidden;
+}
+
+.mem-card-back {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.mem-card-front { background: var(--mem-back); transform: rotateY(180deg); }
+.mem-card.matched .mem-card-front { background: var(--mem-matched); }
+.mem-card.matched { cursor: default; animation: memMatch 0.4s ease; }
+
+@keyframes memMatch {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 720px) {
+    #memory-board {
+        grid-template-columns: repeat(4, 68px);
+        grid-template-rows: repeat(4, 68px);
+        gap: 6px;
+    }
+    .mem-card { width: 68px; height: 68px; font-size: 28px; }
+}
+
+@media (max-width: 560px) {
+    #memory-board { grid-template-columns: repeat(4, 58px); grid-template-rows: repeat(4, 58px); gap: 5px; }
+    .mem-card { width: 58px; height: 58px; font-size: 22px; }
+}
+
+@media (max-width: 380px) {
+    #memory-board { grid-template-columns: repeat(4, 48px); grid-template-rows: repeat(4, 48px); gap: 4px; }
+    .mem-card { width: 48px; height: 48px; font-size: 18px; }
+}

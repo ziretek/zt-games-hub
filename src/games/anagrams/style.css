@@ -1,0 +1,53 @@
+/* ====== Anagrams ====== */
+#anagrams-word {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: 8px;
+    color: var(--accent, #e67e22);
+    text-transform: uppercase;
+    padding: 20px;
+    min-height: 50px;
+}
+
+#anagrams-hint {
+    font-size: 14px;
+    color: var(--text-secondary);
+    min-height: 20px;
+}
+
+#anagrams-input-row { margin-top: 8px; }
+
+@keyframes anagReveal {
+    0% { transform: scale(0.8) rotateX(90deg); opacity: 0; }
+    60% { transform: scale(1.05) rotateX(0deg); opacity: 1; }
+    100% { transform: scale(1) rotateX(0deg); }
+}
+@keyframes anagPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+@keyframes anagShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+#anagrams-input.anag-shake { animation: anagShake 0.4s ease; }
+#anagrams-result { font-size: 14px; font-weight: 600; min-height: 20px; transition: color 0.3s; text-align: center; }
+#anagrams-result.anag-gameover { font-size: 16px; line-height: 1.6; color: #ffd700; }
+
+@media (max-width: 720px) {
+    #anagrams-word { font-size: 28px; letter-spacing: 6px; }
+}
+
+@media (max-width: 560px) {
+    #anagrams-word { font-size: 22px; letter-spacing: 4px; }
+    #anagrams-input { width: 120px; }
+}
+
+@media (max-width: 380px) {
+    #anagrams-word { font-size: 18px; letter-spacing: 3px; }
+    #anagrams-input { width: 100px; }
+}

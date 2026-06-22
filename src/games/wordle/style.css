@@ -1,0 +1,87 @@
+/* ====== Wordle ====== */
+#wordle-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 52px);
+    grid-template-rows: repeat(6, 52px);
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.wrd-cell {
+    width: 52px; height: 52px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+.wrd-cell.absent { background: #3a3a3c; border-color: #3a3a3c; color: #fff; }
+.wrd-cell.present { background: #b59f3b; border-color: #b59f3b; color: #fff; }
+.wrd-cell.correct { background: #538d4e; border-color: #538d4e; color: #fff; }
+.wrd-cell.active { border-color: #565758; animation: pulse 0.8s infinite; }
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+#wordle-keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+.wrd-kbd-row { display: flex; gap: 4px; }
+
+.wrd-key {
+    padding: 6px 8px;
+    min-width: 28px;
+    height: 40px;
+    border-radius: 4px;
+    border: none;
+    background: #818384;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.2s;
+}
+
+.wrd-key:hover { filter: brightness(1.2); }
+.wrd-key.absent { background: #3a3a3c; }
+.wrd-key.present { background: #b59f3b; }
+.wrd-key.correct { background: #538d4e; }
+.wrd-key.wide { min-width: 48px; padding: 6px 10px; }
+
+#wordle-message {
+    text-align: center;
+    min-height: 20px;
+}
+
+@media (max-width: 720px) {
+    #wordle-grid { grid-template-columns: repeat(5, 40px); grid-template-rows: repeat(6, 40px); }
+    .wrd-cell { width: 40px; height: 40px; font-size: 18px; }
+    .wrd-key { min-width: 28px; height: 34px; font-size: 10px; }
+    .wrd-key.wide { min-width: 36px; }
+}
+
+@media (max-width: 560px) {
+    #wordle-grid { grid-template-columns: repeat(5, 34px); grid-template-rows: repeat(6, 34px); gap: 3px; }
+    .wrd-cell { width: 34px; height: 34px; font-size: 14px; }
+    .wrd-key { min-width: 24px; height: 30px; font-size: 9px; }
+    .wrd-key.wide { min-width: 30px; }
+}
+
+@media (max-width: 380px) {
+    #wordle-grid { grid-template-columns: repeat(5, 28px); grid-template-rows: repeat(6, 28px); gap: 2px; }
+    .wrd-cell { width: 28px; height: 28px; font-size: 12px; }
+    .wrd-key { min-width: 22px; height: 28px; font-size: 8px; padding: 2px; }
+    .wrd-key.wide { min-width: 30px; }
+}

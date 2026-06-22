@@ -33,7 +33,10 @@ abstract class Background {
   protected _h = 0;
 
   pause() { this._paused = true; }
-  resume() { this._paused = false; }
+  resume() {
+    this._paused = false;
+    if (!this.animationId) this.animationId = requestAnimationFrame(this.animate);
+  }
 
   protected _onResize: () => void;
 
@@ -52,7 +55,8 @@ abstract class Background {
   onResize?: () => void;
 
   animate = () => {
-    if (!this._paused) this.draw();
+    if (this._paused) { this.animationId = null; return; }
+    this.draw();
     this.animationId = requestAnimationFrame(this.animate);
   };
 

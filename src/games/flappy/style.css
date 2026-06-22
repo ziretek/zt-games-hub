@@ -1,0 +1,19 @@
+/* ====== Flappy Bird ====== */
+#flappy-canvas {
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    background: #4dc9f6;
+    max-width: 100%;
+}
+
+@media (max-width: 720px) {
+    .flappy-canvas, #flappy-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 560px) {
+    #flappy-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 380px) {
+    #flappy-canvas { width: 100%; height: auto; }
+}

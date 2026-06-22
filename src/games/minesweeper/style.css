@@ -1,0 +1,86 @@
+/* ====== Minesweeper ====== */
+#minesweeper-board {
+    display: grid;
+    grid-template-columns: repeat(9, 40px);
+    grid-template-rows: repeat(9, 40px);
+    gap: 2px;
+    background: var(--glass);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+    box-shadow: var(--shadow-card);
+    user-select: none;
+}
+
+.ms-cell {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: bold;
+    font-family: 'Segoe UI', sans-serif;
+    cursor: pointer;
+    touch-action: manipulation;
+    border-radius: 3px;
+    transition: background 0.1s ease;
+}
+
+.ms-cell-hidden { background: var(--ms-hidden); }
+.ms-cell-hidden:hover { background: rgba(var(--primary-rgb), 0.3); }
+.ms-cell-revealed { background: var(--ms-revealed); cursor: default; }
+.ms-cell-flagged {     background: rgba(var(--ms-flagged-rgb), 0.12); }
+.ms-cell-mine { background: rgba(255, 50, 50, 0.3); }
+.ms-cell-mine-blast { background: rgba(255, 0, 0, 0.5); }
+
+.ms-num-1 { color: #5dade2; }
+.ms-num-2 { color: #58d68d; }
+.ms-num-3 { color: #e74c3c; }
+.ms-num-4 { color: #1a5276; }
+.ms-num-5 { color: #922b21; }
+.ms-num-6 { color: #2ecc71; }
+.ms-num-7 { color: #212f3d; }
+.ms-num-8 { color: #7f8c8d; }
+
+.ms-gameover-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+.ms-gameover-text { font-size: 24px; font-weight: bold; color: var(--gold); }
+
+.ms-gameover-overlay button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all var(--transition);
+}
+
+.ms-gameover-overlay button:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.4); }
+
+@media (max-width: 720px) {
+    #minesweeper-board {
+        grid-template-columns: repeat(9, 32px);
+        grid-template-rows: repeat(9, 32px);
+    }
+    .ms-cell { width: 32px; height: 32px; font-size: 12px; }
+}
+
+@media (max-width: 560px) {
+    #minesweeper-board { grid-template-columns: repeat(9, 28px); grid-template-rows: repeat(9, 28px); }
+    .ms-cell { width: 28px; height: 28px; font-size: 10px; }
+}
+
+@media (max-width: 380px) {
+    #minesweeper-board { grid-template-columns: repeat(9, 26px); grid-template-rows: repeat(9, 26px); }
+    .ms-cell { width: 26px; height: 26px; font-size: 9px; }
+}

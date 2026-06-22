@@ -1,0 +1,70 @@
+/* ====== Hangman ====== */
+#hangman-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border-radius: var(--radius-md);
+    background: var(--glass);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(8px);
+}
+
+#hangman-canvas {
+    width: 180px;
+    height: 180px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+}
+
+#hang-word-display {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 12px;
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    min-height: 40px;
+}
+
+.hang-keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    max-width: 320px;
+}
+
+.hang-key {
+    width: 34px; height: 34px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--glass);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: all var(--transition);
+    display: flex; align-items: center; justify-content: center;
+}
+
+.hang-key:hover { background: var(--glass-hover); border-color: rgba(255,255,255,0.15); }
+.hang-key:active { transform: scale(0.92); }
+.hang-key.used { opacity: 0.3; pointer-events: none; }
+.hang-key.wrong { background: rgba(255,50,50,0.2); border-color: rgba(255,50,50,0.3); }
+.hang-key.correct { background: rgba(50,200,50,0.2); border-color: rgba(50,200,50,0.3); }
+
+@media (max-width: 720px) {
+    #hangman-canvas { width: 140px; height: 140px; }
+}
+
+@media (max-width: 560px) {
+    #hang-word-display { font-size: 24px; letter-spacing: 8px; overflow: hidden; text-overflow: ellipsis; }
+    #hangman-canvas { width: 110px; height: 110px; }
+}
+
+@media (max-width: 380px) {
+    #hang-word-display { font-size: 20px; letter-spacing: 6px; }
+    #hangman-canvas { width: 90px; height: 90px; }
+}

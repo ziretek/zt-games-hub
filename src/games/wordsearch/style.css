@@ -1,0 +1,52 @@
+/* ====== Word Search ====== */
+#wordsearch-canvas {
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    background: #1a1a2e;
+    max-width: 100%;
+}
+
+#wordsearch-game-area {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+#wordsearch-words {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    max-height: 360px;
+    overflow-y: auto;
+    min-width: 100px;
+}
+
+.ws-word {
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.05);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.ws-word.found {
+    text-decoration: line-through;
+    opacity: 0.4;
+}
+
+@media (max-width: 720px) {
+    .wordsearch-canvas, #wordsearch-canvas { width: 100%; height: auto; }
+    .ws-word { padding: 6px 10px; }
+}
+
+@media (max-width: 560px) {
+    #wordsearch-canvas { width: 100%; height: auto; }
+    .ws-word { padding: 6px 10px; }
+}
+
+@media (max-width: 380px) {
+    #wordsearch-canvas { width: 100%; height: auto; }
+    .ws-word { padding: 6px 10px; }
+}

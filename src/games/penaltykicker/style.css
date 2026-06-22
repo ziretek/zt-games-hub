@@ -1,0 +1,12 @@
+/* ====== Penalty Kicker ====== */
+@media (max-width: 720px) {
+    .penaltykicker-canvas, #penaltykicker-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 560px) {
+    #penaltykicker-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 380px) {
+    #penaltykicker-canvas { width: 100%; height: auto; }
+}

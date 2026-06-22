@@ -1,0 +1,53 @@
+/* ====== 2048 ====== */
+#game2048-board {
+    display: grid;
+    grid-template-columns: repeat(4, 80px);
+    grid-template-rows: repeat(4, 80px);
+    gap: 6px;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.05);
+    box-shadow: var(--shadow-card);
+}
+
+.g2048-cell {
+    width: 80px; height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800;
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.04);
+    transition: all 0.1s ease;
+    user-select: none;
+}
+
+.g2048-cell-0 { background: rgba(255,255,255,0.02); }
+.g2048-cell-2 { background: #eee4da; color: #776e65; }
+.g2048-cell-4 { background: #ede0c8; color: #776e65; }
+.g2048-cell-8 { background: #f2b179; color: #f9f6f2; }
+.g2048-cell-16 { background: #f59563; color: #f9f6f2; }
+.g2048-cell-32 { background: #f67c5f; color: #f9f6f2; }
+.g2048-cell-64 { background: #f65e3b; color: #f9f6f2; }
+.g2048-cell-128 { background: #edcf72; color: #f9f6f2; font-size: 24px; }
+.g2048-cell-256 { background: #edcc61; color: #f9f6f2; font-size: 24px; }
+.g2048-cell-512 { background: #edc850; color: #f9f6f2; font-size: 24px; }
+.g2048-cell-1024 { background: #edc53f; color: #f9f6f2; font-size: 20px; }
+.g2048-cell-2048 { background: #edc22e; color: #f9f6f2; font-size: 20px; }
+
+@media (max-width: 720px) {
+    #game2048-board { grid-template-columns: repeat(4, 64px); grid-template-rows: repeat(4, 64px); gap: 4px; }
+    .g2048-cell { width: 64px; height: 64px; font-size: 22px; }
+    .g2048-cell-128, .g2048-cell-256, .g2048-cell-512 { font-size: 18px; }
+    .g2048-cell-1024, .g2048-cell-2048 { font-size: 16px; }
+}
+
+@media (max-width: 560px) {
+    #game2048-board { grid-template-columns: repeat(4, 52px); grid-template-rows: repeat(4, 52px); gap: 3px; }
+    .g2048-cell { width: 52px; height: 52px; font-size: 18px; }
+    .g2048-cell-128, .g2048-cell-256, .g2048-cell-512 { font-size: 14px; }
+    .g2048-cell-1024, .g2048-cell-2048 { font-size: 12px; }
+}
+
+@media (max-width: 380px) {
+    #game2048-board { grid-template-columns: repeat(4, 44px); grid-template-rows: repeat(4, 44px); gap: 3px; }
+    .g2048-cell { width: 44px; height: 44px; font-size: 15px; }
+}

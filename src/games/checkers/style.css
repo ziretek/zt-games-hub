@@ -1,0 +1,79 @@
+/* ====== Checkers ====== */
+#checker-board-container {
+    position: relative;
+    width: 460px;
+    height: 460px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+
+#checkerGame {
+    width: 100%; height: 100%;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+.cell.light { background: var(--checker-light); }
+.cell.dark { background: var(--checker-dark); }
+
+.cell.last-move { background: rgba(255, 215, 0, 0.2); }
+
+.piece {
+    width: 72%; height: 72%;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: transform var(--spring), box-shadow var(--transition);
+}
+
+.piece:hover { transform: scale(1.08); }
+
+.piece.red {
+    background: radial-gradient(circle at 35% 35%, #ff6b6b, var(--piece-red), #8b1a1a);
+}
+.piece.black {
+    background: radial-gradient(circle at 35% 35%, #555, var(--piece-black), #111);
+}
+.cell.selected { outline: 3px solid rgba(255,215,0,0.7); outline-offset: -3px; border-radius: 2px; }
+
+.cell.valid-move::before {
+    content: '';
+    position: absolute;
+    width: 35%; height: 35%;
+    background: rgba(var(--checkers-valid-rgb), 0.4);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.piece.king {
+    box-shadow: inset 0 0 0 3px rgba(var(--gold-rgb), 0.95), 0 4px 12px rgba(0,0,0,0.4);
+}
+.piece.king::after {
+    content: '♛';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    color: var(--gold);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+#scoreDisplay { font-size: 11px; color: var(--text-secondary); }
+
+/* Responsive */
+@media (max-width: 720px) {
+    #checker-board-container { width: 300px; height: 300px; }
+}
+
+@media (max-width: 560px) {
+    #checker-board-container { width: 260px; height: 260px; }
+}
+
+@media (max-width: 380px) {
+    #checker-board-container { width: 230px; height: 230px; }
+}

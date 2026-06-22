@@ -1,0 +1,64 @@
+/* ====== Gomoku ====== */
+#gomoku-board {
+    display: grid;
+    grid-template-columns: repeat(15, 32px);
+    grid-template-rows: repeat(15, 32px);
+    gap: 1px;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    background: rgba(222, 184, 135, 0.15);
+    box-shadow: var(--shadow-card);
+}
+
+.gom-cell {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    border-radius: 50%;
+    background: transparent;
+    transition: background 0.1s ease;
+}
+
+.gom-cell:hover { background: rgba(255,255,255,0.05); }
+
+.gom-stone {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    transition: all 0.15s ease;
+}
+
+.gom-stone.black { background: radial-gradient(circle at 35% 35%, #555, #111); box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+.gom-stone.white { background: radial-gradient(circle at 35% 35%, #fff, #ccc); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.gom-stone.gom-win { animation: gomPulse 0.5s ease-in-out 3; }
+
+@keyframes gomPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(var(--gold-rgb), 0.4); }
+    50% { transform: scale(1.2); box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.8); }
+}
+
+.gom-cell.gom-valid::after {
+    content: '';
+    width: 8px; height: 8px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+    #gomoku-board { grid-template-columns: repeat(15, 28px); grid-template-rows: repeat(15, 28px); }
+    .gom-cell { width: 28px; height: 28px; }
+    .gom-stone { width: 20px; height: 20px; }
+}
+
+@media (max-width: 560px) {
+    #gomoku-board { grid-template-columns: repeat(15, 26px); grid-template-rows: repeat(15, 26px); }
+    .gom-cell { width: 26px; height: 26px; }
+    .gom-stone { width: 18px; height: 18px; }
+}
+
+@media (max-width: 380px) {
+    #gomoku-board { grid-template-columns: repeat(15, 24px); grid-template-rows: repeat(15, 24px); gap: 1px; }
+    .gom-cell { width: 24px; height: 24px; }
+    .gom-stone { width: 16px; height: 16px; }
+}

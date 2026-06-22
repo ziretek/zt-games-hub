@@ -1,0 +1,19 @@
+/* ====== Dino Runner ====== */
+#dino-canvas {
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    background: #f7f7f7;
+    max-width: 100%;
+}
+
+@media (max-width: 720px) {
+    .dino-canvas, #dino-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 560px) {
+    #dino-canvas { width: 100%; height: auto; }
+}
+
+@media (max-width: 380px) {
+    #dino-canvas { width: 100%; height: auto; }
+}

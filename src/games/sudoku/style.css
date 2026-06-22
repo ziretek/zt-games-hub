@@ -1,0 +1,34 @@
+/* ====== Sudoku ====== */
+#sudoku-board {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.sudoku-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; border-radius: 8px; z-index: 10;
+}
+.sudoku-overlay-text { font-size: 24px; font-weight: bold; color: var(--gold); }
+.sudoku-overlay-info { font-size: 14px; color: var(--text); }
+.sudoku-overlay-btn {
+    padding: 8px 20px; border: none; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: var(--text); cursor: pointer; font-size: 13px; font-weight: 600;
+    transition: all var(--transition);
+}
+.sudoku-overlay-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.4); }
+
+@media (max-width: 720px) {
+    #sudoku-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; max-width: 340px; }
+}
+
+@media (max-width: 560px) {
+    #sudoku-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; max-width: 286px; }
+}
+
+@media (max-width: 380px) {
+    #sudoku-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; max-width: 250px; }
+}

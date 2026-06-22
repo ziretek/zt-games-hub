@@ -1,0 +1,32 @@
+/* ====== Typing Test ====== */
+#typingtest-words-display {
+    font-size: 20px;
+    line-height: 1.6;
+    max-width: 360px;
+    text-align: center;
+    min-height: 80px;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: var(--radius-sm);
+    font-family: 'Courier New', monospace;
+    word-spacing: 8px;
+}
+
+.tt-char { transition: color 0.1s; }
+.tt-char.done { color: var(--accent, #2ecc71); }
+.tt-char.current { color: var(--text); background: rgba(255,255,255,0.1); border-radius: 2px; }
+.tt-char.wrong { color: #e74c3c; text-decoration: underline; }
+.tt-char.pending { color: var(--text-secondary); }
+
+@media (max-width: 720px) {
+    #typingtest-words-display { font-size: 16px; }
+}
+
+@media (max-width: 560px) {
+    #typingtest-input { width: 180px; }
+    #typingtest-words-display { font-size: 14px; }
+}
+
+@media (max-width: 380px) {
+    #typingtest-input { width: 140px; }
+}

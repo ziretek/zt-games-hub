@@ -1,3 +1,4 @@
+import './style.css';
 import type { Game } from '../../core/game.js';
 import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
