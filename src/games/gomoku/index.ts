@@ -16,6 +16,7 @@ export class GomokuGame implements Game {
   aiEnabled = true;
   private _winCells: [number, number][] = [];
   private _aiTimer: ReturnType<typeof setTimeout> | null = null;
+  private _boundAiToggle: (() => void) | null = null;
 
   constructor() {
     this.boardEl = document.getElementById('gomoku-board')!;
@@ -29,6 +30,11 @@ export class GomokuGame implements Game {
     this.render();
     if (this.aiEnabled && this.currentPlayer === 'black')
       this._aiTimer = setTimeout(() => { this._aiTimer = null; if (!this.gameOver && this.currentPlayer === 'black' && !this.board[7][7]) this.makeMove(7, 7); }, 200);
+    if (!this._boundAiToggle) {
+      this._boundAiToggle = () => this.toggleAI();
+      const btn = document.getElementById('gom-ai-btn');
+      if (btn) btn.addEventListener('click', this._boundAiToggle);
+    }
   }
 
   private inBounds(r: number, c: number): boolean { return r >= 0 && r < this.size && c >= 0 && c < this.size; }
@@ -137,7 +143,7 @@ export class GomokuGame implements Game {
 
   pause(): void { if (this._aiTimer) { clearTimeout(this._aiTimer); this._aiTimer = null; } }
   resume(): void { this.state = 'playing'; }
-  destroy(): void { this.pause(); }
+  destroy(): void { this.pause(); if (this._boundAiToggle) { const btn = document.getElementById('gom-ai-btn'); if (btn) btn.removeEventListener('click', this._boundAiToggle); this._boundAiToggle = null; } }
 }
 
 registerGame(

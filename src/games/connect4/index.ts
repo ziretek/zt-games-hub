@@ -17,6 +17,7 @@ export class Connect4Game implements Game {
   private _boundClick: ((e: MouseEvent) => void) | null = null;
   private _boundMove: ((e: MouseEvent) => void) | null = null;
   private _boundLeave: ((e: MouseEvent) => void) | null = null;
+  private _boundAiToggle: (() => void) | null = null;
 
   init(): void {
     this.board = Array.from({ length: this.ROWS }, () => Array(this.COLS).fill(null));
@@ -25,6 +26,10 @@ export class Connect4Game implements Game {
     this.render();
     const btn = document.getElementById('c4-ai-btn');
     if (btn) btn.textContent = this.aiEnabled ? 'Vs Computer: On' : 'Vs Computer: Off';
+    if (!this._boundAiToggle) {
+      this._boundAiToggle = () => this.toggleAI();
+      btn?.addEventListener('click', this._boundAiToggle);
+    }
     if (!this._boundClick) {
       this._boundClick = (e: MouseEvent) => {
         const cell = (e.target as HTMLElement).closest('.c4-cell') as HTMLElement | null;
@@ -158,7 +163,7 @@ export class Connect4Game implements Game {
 
   pause(): void { if (this._aiTimer) { clearTimeout(this._aiTimer); this._aiTimer = null; } }
   resume(): void { this.state = 'playing'; }
-  destroy(): void { this.pause(); }
+  destroy(): void { this.pause(); if (this._boundAiToggle) { const btn = document.getElementById('c4-ai-btn'); if (btn) btn.removeEventListener('click', this._boundAiToggle); this._boundAiToggle = null; } }
 }
 
 registerGame(

@@ -14,6 +14,7 @@ export class TicTacToeGame implements Game {
   aiEnabled = true;
   private winCombo: number[] | null = null;
   private _aiTimer: ReturnType<typeof setTimeout> | null = null;
+  private _boundAiToggle: (() => void) | null = null;
 
   constructor() {
     this.boardEl = document.getElementById('tictactoe-board')!;
@@ -24,6 +25,11 @@ export class TicTacToeGame implements Game {
     this.currentPlayer = 'X'; this.gameOver = false; this.winner = null; this.winCombo = null;
     this.state = 'playing';
     this.render();
+    if (!this._boundAiToggle) {
+      this._boundAiToggle = () => this.toggleAI();
+      const btn = document.getElementById('ttt-ai-btn');
+      if (btn) btn.addEventListener('click', this._boundAiToggle);
+    }
   }
 
   private getWinCombo(): number[] | null {
@@ -85,7 +91,7 @@ export class TicTacToeGame implements Game {
 
   pause(): void { if (this._aiTimer) { clearTimeout(this._aiTimer); this._aiTimer = null; } }
   resume(): void { this.state = 'playing'; }
-  destroy(): void { this.pause(); }
+  destroy(): void { this.pause(); if (this._boundAiToggle) { const btn = document.getElementById('ttt-ai-btn'); if (btn) btn.removeEventListener('click', this._boundAiToggle); this._boundAiToggle = null; } }
 }
 
 registerGame(
