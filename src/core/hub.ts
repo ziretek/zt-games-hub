@@ -134,6 +134,17 @@ export function showHub(): void {
   }, 250);
 }
 
+function bindNewGameButton(id: string): void {
+  const btn = document.getElementById(id + '-new-btn') || document.getElementById('newGameBtn');
+  if (!btn || btn.dataset.listenerAttached) return;
+  btn.dataset.listenerAttached = 'true';
+  btn.addEventListener('click', () => {
+    const inst = window[id + 'Game'] as { newGame?: () => void; init?: () => void } | undefined;
+    if (inst?.newGame) inst.newGame();
+    else inst?.init?.();
+  });
+}
+
 export function showGame(id: string): void {
   const entry = GAME_MAP.get(id);
   if (!entry) return;
@@ -179,6 +190,7 @@ export function showGame(id: string): void {
           const inst = new Ctor() as { init?: () => void };
           window[key] = inst;
           inst.init?.();
+          bindNewGameButton(id);
         }
       }).catch((e: unknown) => {
         console.error(`Failed to load game ${id}:`, e);
@@ -198,10 +210,12 @@ export function showGame(id: string): void {
         const inst = new Ctor() as { init?: () => void };
         window[key] = inst;
         inst.init?.();
+        bindNewGameButton(id);
       }
     } else {
       const inst = window[key] as { init?: () => void } | undefined;
       if (inst?.init) inst.init();
+      bindNewGameButton(id);
     }
   }, 250);
 }
