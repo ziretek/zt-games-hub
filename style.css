@@ -543,9 +543,9 @@ button:active { transform: scale(0.95); }
     display: none;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-    padding-top: calc(20px + env(safe-area-inset-top, 0px));
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    padding: 16px;
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     opacity: 0;
     transition: opacity 0.25s ease, transform 0.25s ease;
 }
@@ -569,7 +569,7 @@ button:active { transform: scale(0.95); }
     justify-content: space-between;
     width: 100%;
     max-width: 600px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .back-btn {
@@ -1030,7 +1030,8 @@ canvas {
     .game-card-title { font-size: 12px; }
     .game-card-desc { font-size: 10px; }
 
-    #game-view { padding: 12px; }
+    #game-view { padding: 12px; padding-top: calc(12px + env(safe-area-inset-top, 0px)); padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+    .game-view-top { margin-bottom: 12px; }
     .game-view-top { margin-bottom: 12px; }
     .penaltykicker-canvas, #penaltykicker-canvas,
     .sprint-canvas, #sprint-canvas, .bowling-canvas, #bowling-canvas,
@@ -1099,6 +1100,7 @@ canvas {
     .hub-recent { max-width: 25%; font-size: 10px; }
 
     /* Mobile-optimized controls — stack and bottom-friendly */
+    .gw { gap: 8px; }
     #checker-controls, #chess-controls, #connect4-controls,
     #minesweeper-controls, #memory-controls, #snake-controls,
     #tictactoe-controls, #hangman-controls, #game2048-controls,
@@ -1113,6 +1115,9 @@ canvas {
     }
 
     #game-view { padding: 10px 8px; padding-top: calc(10px + env(safe-area-inset-top, 0px)); padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+    .game-view-top { margin-bottom: 8px; }
+    .game-view-title { font-size: 14px; }
+    .back-btn { padding: 8px 12px; min-height: 36px; font-size: 12px; }
 
     /* Even smaller boards for tiny screens */
     .ws-word { padding: 6px 10px; }
