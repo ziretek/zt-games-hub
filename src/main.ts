@@ -55,11 +55,31 @@ if (pwaUpdate) {
     pwaUpdate.style.display = 'none';
     location.reload();
   });
+  const dismissBtn = document.createElement('button');
+  dismissBtn.textContent = '✕';
+  dismissBtn.setAttribute('aria-label', 'Dismiss');
+  Object.assign(dismissBtn.style, {
+    position: 'absolute', top: '6px', right: '8px',
+    background: 'none', border: 'none', color: '#fff', fontSize: '16px',
+    cursor: 'pointer', padding: '0', lineHeight: '1', opacity: '0.6',
+  });
+  dismissBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    pwaUpdate.style.display = 'none';
+    const cooldown = new Date();
+    cooldown.setHours(cooldown.getHours() + 6);
+    localStorage.setItem('pwa-update-cooldown', cooldown.toISOString());
+  });
+  pwaUpdate.style.position = 'relative';
+  pwaUpdate.appendChild(dismissBtn);
 }
 
 registerSW({
   onNeedRefresh() {
-    if (pwaUpdate) pwaUpdate.style.display = 'block';
+    if (!pwaUpdate) return;
+    const cooldown = localStorage.getItem('pwa-update-cooldown');
+    if (cooldown && new Date(cooldown) > new Date()) return;
+    pwaUpdate.style.display = 'block';
   },
   onOfflineReady() {
     console.log('App ready for offline use');
