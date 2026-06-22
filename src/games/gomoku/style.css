@@ -58,7 +58,7 @@
 }
 
 @media (max-width: 380px) {
-    #gomoku-board { grid-template-columns: repeat(15, 24px); grid-template-rows: repeat(15, 24px); gap: 1px; }
-    .gom-cell { width: 24px; height: 24px; }
+    #gomoku-board { grid-template-columns: repeat(15, 22px); grid-template-rows: repeat(15, 22px); gap: 0px; padding: 8px; }
+    .gom-cell { width: 22px; height: 22px; }
     .gom-stone { width: 16px; height: 16px; }
 }

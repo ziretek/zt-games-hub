@@ -82,6 +82,6 @@
 @media (max-width: 380px) {
     #wordle-grid { grid-template-columns: repeat(5, 28px); grid-template-rows: repeat(6, 28px); gap: 2px; }
     .wrd-cell { width: 28px; height: 28px; font-size: 12px; }
-    .wrd-key { min-width: 22px; height: 28px; font-size: 8px; padding: 2px; }
-    .wrd-key.wide { min-width: 30px; }
+    .wrd-key { min-width: 28px; height: 32px; font-size: 10px; padding: 4px; }
+    .wrd-key.wide { min-width: 36px; }
 }

@@ -78,5 +78,5 @@
 }
 
 @media (max-width: 380px) {
-    #checker-board-container { width: 230px; height: 230px; }
+    #checker-board-container { width: 280px; height: 280px; }
 }

@@ -129,6 +129,6 @@
 }
 
 @media (max-width: 380px) {
-    #chess-board, #chess-board-container { width: 240px; height: 240px; }
-    .ch-cell { font-size: 20px; }
+    #chess-board, #chess-board-container { width: 280px; height: 280px; }
+    .ch-cell { font-size: 26px; }
 }

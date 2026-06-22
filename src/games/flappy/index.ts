@@ -3,6 +3,7 @@ import type { Game } from '../../core/game.js';
 import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { enableTouchOnCanvas } from '../../utils/touch.js';
+import { enableDPR } from '../../utils/dpr.js';
 
 export class FlappyGame implements Game {
   readonly id = 'flappy';
@@ -24,6 +25,7 @@ export class FlappyGame implements Game {
     this.boardEl = document.getElementById('flappy-board')!;
     this.canvas = document.createElement('canvas');
     this.canvas.width = 400; this.canvas.height = 500;
+    enableDPR(this.canvas, 400, 500);
     this.boardEl.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d')!;
   }

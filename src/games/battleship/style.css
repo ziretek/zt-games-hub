@@ -68,6 +68,6 @@
 }
 
 @media (max-width: 380px) {
-    .bs-grid { grid-template-columns: repeat(10, 24px); grid-template-rows: repeat(10, 24px); }
-    .bs-cell { width: 24px; height: 24px; font-size: 7px; }
+    .bs-grid { grid-template-columns: repeat(10, 32px); grid-template-rows: repeat(10, 32px); }
+    .bs-cell { width: 32px; height: 32px; font-size: 10px; }
 }

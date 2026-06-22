@@ -53,7 +53,7 @@
 }
 
 @media (max-width: 380px) {
-    #othello-board { grid-template-columns: repeat(8, 28px); grid-template-rows: repeat(8, 28px); gap: 1px; }
-    .oth-cell { width: 28px; height: 28px; }
-    .oth-piece { width: 20px; height: 20px; }
+    #othello-board { grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); gap: 1px; }
+    .oth-cell { width: 40px; height: 40px; }
+    .oth-piece { width: 30px; height: 30px; }
 }

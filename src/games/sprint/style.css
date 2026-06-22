@@ -1,4 +1,5 @@
 /* ====== Sprint ====== */
+#sprint-board { touch-action: manipulation; }
 @media (max-width: 720px) {
     .sprint-canvas, #sprint-canvas { width: 100%; height: auto; }
 }

@@ -30,5 +30,5 @@
 }
 
 @media (max-width: 380px) {
-    #sudoku-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; max-width: 250px; }
+    #sudoku-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; max-width: 280px; }
 }

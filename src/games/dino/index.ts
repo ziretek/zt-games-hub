@@ -3,6 +3,7 @@ import type { Game } from '../../core/game.js';
 import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { enableTouchOnCanvas } from '../../utils/touch.js';
+import { enableDPR } from '../../utils/dpr.js';
 
 export class DinoGame implements Game {
   readonly id = 'dino';
@@ -25,6 +26,7 @@ export class DinoGame implements Game {
     this.boardEl = document.getElementById('dino-board')!;
     this.canvas = document.createElement('canvas');
     this.canvas.width = 600; this.canvas.height = 300;
+    enableDPR(this.canvas, 600, 300);
     this.boardEl.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d')!;
   }

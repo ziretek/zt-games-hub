@@ -3,6 +3,7 @@ import type { Game } from '../../core/game.js';
 import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { enableTouchOnCanvas } from '../../utils/touch.js';
+import { enableDPR } from '../../utils/dpr.js';
 
 export class BaseballGame implements Game {
   readonly id = 'baseball';
@@ -27,6 +28,7 @@ export class BaseballGame implements Game {
     this.turnEl = document.getElementById('baseb-turn');
     this.canvas = document.createElement('canvas');
     this.canvas.width = 600; this.canvas.height = 400;
+    enableDPR(this.canvas, 600, 400);
     this.boardEl.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d')!;
   }

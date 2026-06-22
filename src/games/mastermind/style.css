@@ -87,5 +87,6 @@
 }
 
 @media (max-width: 380px) {
-    .mm-slot { width: 28px; height: 28px; }
+    .mm-slot { width: 32px; height: 32px; }
+    .mm-palette-btn { width: 36px; height: 36px; }
 }

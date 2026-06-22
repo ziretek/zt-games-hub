@@ -81,6 +81,6 @@
 }
 
 @media (max-width: 380px) {
-    #minesweeper-board { grid-template-columns: repeat(9, 26px); grid-template-rows: repeat(9, 26px); }
-    .ms-cell { width: 26px; height: 26px; font-size: 9px; }
+    #minesweeper-board { grid-template-columns: repeat(9, 36px); grid-template-rows: repeat(9, 36px); }
+    .ms-cell { width: 36px; height: 36px; font-size: 12px; }
 }
