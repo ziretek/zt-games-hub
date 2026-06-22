@@ -2,6 +2,7 @@ import { buildHub, showHub, showGame, setFilter, applySearch } from './core/hub.
 import { initBackground, switchTheme, pauseBackground, resumeBackground } from './core/backgrounds.js';
 import { GAMES } from './core/registry-data.js';
 import './core/lazy-load.js';
+import { registerSW } from 'virtual:pwa-register';
 
 // Global error handler — catches uncaught exceptions and promise rejections
 window.addEventListener('error', (e) => {
@@ -50,8 +51,20 @@ if (installBtn) {
 
 const pwaUpdate = document.getElementById('pwa-update');
 if (pwaUpdate) {
-  pwaUpdate.addEventListener('click', () => location.reload());
+  pwaUpdate.addEventListener('click', () => {
+    pwaUpdate.style.display = 'none';
+    location.reload();
+  });
 }
+
+registerSW({
+  onNeedRefresh() {
+    if (pwaUpdate) pwaUpdate.style.display = 'block';
+  },
+  onOfflineReady() {
+    console.log('App ready for offline use');
+  },
+});
 
 // Keyboard shortcuts for snake
 document.addEventListener('keydown', (e: KeyboardEvent) => {
