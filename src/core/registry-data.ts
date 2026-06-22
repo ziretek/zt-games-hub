@@ -33,7 +33,7 @@ export const GAMES: GameEntry[] = [
   { id: 'pong',          name: 'Pong',            category: 'arcade', icon: '🏓',  desc: 'Classic paddle game',     accent: '96, 165, 250', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'breakout',      name: 'Breakout',        category: 'arcade', icon: '🧱',  desc: 'Break all bricks',        accent: '231, 76, 60', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'othello',       name: 'Othello',         category: 'board',  icon: '⚫⚪', desc: 'Flip the board',          accent: '45, 90, 39', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
-  { id: 'battleship',    name: 'Battleship',      category: 'board',  icon: '🚢',  desc: 'Sink the fleet',          accent: '100, 180, 255', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
+  { id: 'battleship',    name: 'Battleship',      category: 'board',  icon: '🚢',  desc: 'Sink the fleet',          accent: '100, 180, 255', needsNewBtn: true, needsAiBtn: true, needsRecreate: false },
   { id: 'gomoku',        name: 'Gomoku',          category: 'board',  icon: '⬛⬜', desc: 'Five in a row',            accent: '222, 184, 135', needsNewBtn: true, needsAiBtn: true, needsRecreate: false },
   { id: 'simon',         name: 'Simon',           category: 'puzzle', icon: '🔴🟢', desc: 'Remember the pattern',     accent: '41, 128, 185', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
   { id: 'mastermind',    name: 'Mastermind',      category: 'puzzle', icon: '🎯',  desc: 'Crack the color code',    accent: '155, 89, 182', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },

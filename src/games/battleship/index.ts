@@ -7,6 +7,7 @@ export class BattleshipGame implements Game {
   state: GameState = 'idle';
   private boardEl: HTMLElement;
   private turnEl: HTMLElement | null;
+  private aiBtnEl: HTMLElement | null;
   private size = 10;
   private ships = [5, 4, 3, 3, 2];
   private phase: 'place' | 'play' | 'gameover' = 'place';
@@ -19,14 +20,21 @@ export class BattleshipGame implements Game {
   private enemyHits = 0;
   private playerTargets: boolean[][] = [];
   private enemyTargets: boolean[][] = [];
+  private p2Grid: number[][] = [];
+  private p2Ships: number[][] = [];
+  private p2Hits = 0;
+  private p2Targets: boolean[][] = [];
   private gameOver = false;
+  private vsComputer = true;
   private _aiLastHit: [number, number] | null = null;
   private _aiTimer: ReturnType<typeof setTimeout> | null = null;
   private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
+  private _boundHandler: (() => void) | null = null;
 
   constructor() {
     this.boardEl = document.getElementById('battleship-board')!;
     this.turnEl = document.getElementById('bs-turn');
+    this.aiBtnEl = document.getElementById('bs-ai-btn');
   }
 
   init(): void {
@@ -34,17 +42,30 @@ export class BattleshipGame implements Game {
     this.placingShip = 0; this.placingDir = 0;
     this.playerGrid = Array.from({ length: this.size }, () => Array(this.size).fill(0));
     this.enemyGrid = Array.from({ length: this.size }, () => Array(this.size).fill(0));
+    this.p2Grid = Array.from({ length: this.size }, () => Array(this.size).fill(0));
     this.enemyShips = this.placeShipsRandom();
-    this.playerHits = 0; this.enemyHits = 0;
+    this.p2Ships = this.placeShipsRandom();
+    this.playerHits = 0; this.enemyHits = 0; this.p2Hits = 0;
     this.playerTargets = Array.from({ length: this.size }, () => Array(this.size).fill(false));
     this.enemyTargets = Array.from({ length: this.size }, () => Array(this.size).fill(false));
+    this.p2Targets = Array.from({ length: this.size }, () => Array(this.size).fill(false));
     this.gameOver = false; this._aiLastHit = null;
     this.state = 'playing';
+    if (this.aiBtnEl) this.aiBtnEl.textContent = 'Vs Computer: ' + (this.vsComputer ? 'On' : 'Off');
     this.render();
+    if (!this._boundHandler && this.aiBtnEl) {
+      this._boundHandler = () => { this.toggleAI(); };
+      this.aiBtnEl.addEventListener('click', this._boundHandler);
+    }
     if (!this._keyHandler) {
       this._keyHandler = (e: KeyboardEvent) => { if (e.key === 'r' || e.key === 'R') { e.preventDefault(); this.rotateShip(); } };
       document.addEventListener('keydown', this._keyHandler);
     }
+  }
+
+  toggleAI(): void {
+    this.vsComputer = !this.vsComputer;
+    if (this.aiBtnEl) this.aiBtnEl.textContent = 'Vs Computer: ' + (this.vsComputer ? 'On' : 'Off');
   }
 
   private placeShipsRandom(): number[][] {
@@ -80,13 +101,32 @@ export class BattleshipGame implements Game {
     }
   }
 
+  private p2Move(r: number, c: number): void {
+    if (this.phase !== 'play' || this.gameOver || this.p2Targets[r][c]) return;
+    this.p2Targets[r][c] = true;
+    const ships = this.vsComputer ? this.playerGrid : this.playerGrid;
+    if (ships[r][c] > 0) { this.playerGrid[r][c] = 2; this.p2Hits++; this.checkWin(); }
+    else { this.playerGrid[r][c] = 1; }
+    this.render();
+    if (!this.gameOver && this.turnEl) this.turnEl.textContent = 'Your turn, P1';
+  }
+
   private playerMove(r: number, c: number): void {
-    if (this.phase !== 'play' || this.gameOver || this.playerTargets[r][c]) return;
-    this.playerTargets[r][c] = true;
-    if (this.enemyShips[r][c] > 0) { this.enemyGrid[r][c] = 2; this.playerHits++; this.checkWin(); }
+    if (this.phase !== 'play' || this.gameOver) return;
+    const targets = this.vsComputer ? this.playerTargets : this.p2Targets;
+    if (targets[r][c]) return;
+    targets[r][c] = true;
+    const ships = this.vsComputer ? this.enemyShips : this.p2Ships;
+    if (ships[r][c] > 0) { this.enemyGrid[r][c] = 2; this.playerHits++; this.checkWin(); }
     else { this.enemyGrid[r][c] = 1; }
     this.render();
-    if (!this.gameOver) { if (this.turnEl) this.turnEl.textContent = 'Computer thinking...'; this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 400); }
+    if (this.gameOver) return;
+    if (this.vsComputer) {
+      if (this.turnEl) this.turnEl.textContent = 'Computer thinking...';
+      this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 400);
+    } else {
+      if (this.turnEl) this.turnEl.textContent = 'Your turn, P2';
+    }
   }
 
   private aiMove(): void {
@@ -110,8 +150,8 @@ export class BattleshipGame implements Game {
   }
 
   private checkWin(): void {
-    if (this.playerHits >= 17) { this.gameOver = true; if (this.turnEl) { this.turnEl.textContent = 'You win!'; this.turnEl.style.color = '#ffd700'; } this.state = 'won'; }
-    if (this.enemyHits >= 17) { this.gameOver = true; if (this.turnEl) { this.turnEl.textContent = 'Computer wins!'; this.turnEl.style.color = '#ff6b6b'; } this.state = 'lost'; }
+    if (this.playerHits >= 17) { this.gameOver = true; if (this.turnEl) { this.turnEl.textContent = this.vsComputer ? 'You win!' : 'P1 wins!'; this.turnEl.style.color = '#ffd700'; } this.state = 'won'; }
+    if (this.enemyHits >= 17) { this.gameOver = true; if (this.turnEl) { this.turnEl.textContent = this.vsComputer ? 'Computer wins!' : 'P2 wins!'; this.turnEl.style.color = '#ff6b6b'; } this.state = 'lost'; }
     if (this.gameOver) this.render();
   }
 
@@ -121,7 +161,10 @@ export class BattleshipGame implements Game {
     if (!this.canPlace(this.playerGrid, r, c, len, this.placingDir)) return;
     this.doPlace(this.playerGrid, r, c, len, this.placingDir, this.placingShip + 1);
     this.placingShip++;
-    if (this.placingShip >= this.ships.length) { this.phase = 'play'; if (this.turnEl) this.turnEl.textContent = 'Your turn'; }
+    if (this.placingShip >= this.ships.length) {
+      if (this.vsComputer) { this.phase = 'play'; if (this.turnEl) this.turnEl.textContent = 'Your turn'; }
+      else { this.placingShip = 0; this.placingDir = 0; this.playerGrid = this.p2Grid; if (this.turnEl) this.turnEl.textContent = 'P2: Place ship: ' + this.ships[0]; }
+    }
     this.render();
   }
 
@@ -129,10 +172,15 @@ export class BattleshipGame implements Game {
 
   render(): void {
     this.boardEl.innerHTML = '';
-    for (const [grid, label, clickable] of [
-      [this.playerGrid, 'Your Fleet', false] as const,
-      [this.enemyGrid, 'Enemy Waters', this.phase === 'play' && !this.gameOver] as const,
-    ]) {
+    const sections: [number[][], string, boolean][] = [];
+    if (this.phase === 'place') {
+      sections.push([this.playerGrid === this.p2Grid ? this.p2Grid : this.playerGrid, this.playerGrid === this.p2Grid ? 'P2 Fleet' : 'Your Fleet', false]);
+      if (!this.vsComputer) sections.push([this.enemyGrid, 'Enemy Waters', false]);
+    } else {
+      sections.push([this.playerGrid, this.vsComputer ? 'Your Fleet' : 'P1\'s Fleet', !this.vsComputer && !this.gameOver]);
+      sections.push([this.enemyGrid, this.vsComputer ? 'Enemy Waters' : 'P2\'s Waters', !this.gameOver]);
+    }
+    for (const [grid, label, clickable] of sections) {
       const div = document.createElement('div'); div.className = 'bs-section';
       const lbl = document.createElement('div'); lbl.className = 'bs-label'; lbl.textContent = label; div.appendChild(lbl);
       const g = document.createElement('div'); g.className = 'bs-grid';
@@ -141,9 +189,13 @@ export class BattleshipGame implements Game {
         const val = grid[r][c];
         if (val === 1) cell.classList.add('bs-miss');
         else if (val === 2) cell.classList.add('bs-hit');
-        if (grid === this.playerGrid) { if (val >= 1) cell.classList.add('bs-ship'); }
-        if (clickable) cell.addEventListener('click', () => this.playerMove(r, c));
-        if (grid === this.playerGrid && this.phase === 'place') cell.addEventListener('click', () => this.placeShip(r, c));
+        if (grid === this.playerGrid || grid === this.p2Grid) { if (val >= 1) cell.classList.add('bs-ship'); }
+        if (clickable) {
+          if (grid === this.playerGrid) cell.addEventListener('click', () => this.p2Move(r, c));
+          else cell.addEventListener('click', () => this.playerMove(r, c));
+        }
+        if (grid === this.playerGrid && this.phase === 'place' && this.playerGrid !== this.p2Grid) cell.addEventListener('click', () => this.placeShip(r, c));
+        if (grid === this.p2Grid && this.phase === 'place' && this.playerGrid === this.p2Grid) cell.addEventListener('click', () => this.placeShip(r, c));
         g.appendChild(cell);
       }
       div.appendChild(g); this.boardEl.appendChild(div);
@@ -154,13 +206,14 @@ export class BattleshipGame implements Game {
       btn.style.cssText = 'padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--glass);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;';
       btn.addEventListener('click', () => this.rotateShip());
       this.boardEl.appendChild(btn);
-      if (this.turnEl) this.turnEl.textContent = 'Place ship: ' + this.ships[this.placingShip] + ' (click grid, R to rotate)';
+      const label = this.playerGrid === this.p2Grid ? 'P2' : 'P1';
+      if (this.turnEl) this.turnEl.textContent = label + ': Place ship: ' + this.ships[this.placingShip] + ' (click grid, R to rotate)';
     }
   }
 
   pause(): void { if (this._aiTimer) { clearTimeout(this._aiTimer); this._aiTimer = null; } }
   resume(): void { this.state = 'playing'; }
-  destroy(): void { this.pause(); if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler); }
+  destroy(): void { this.pause(); if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler); if (this._boundHandler && this.aiBtnEl) { this.aiBtnEl.removeEventListener('click', this._boundHandler); this._boundHandler = null; } }
 }
 
 registerGame(
