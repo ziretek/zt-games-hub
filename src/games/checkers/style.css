@@ -6,6 +6,7 @@
     border-radius: var(--radius-sm);
     overflow: hidden;
     box-shadow: var(--shadow-card);
+    touch-action: manipulation;
 }
 
 #checkerGame {
@@ -15,7 +16,7 @@
     grid-template-rows: repeat(8, 1fr);
 }
 
-.cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+.cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; touch-action: manipulation; }
 .cell.light { background: var(--checker-light); }
 .cell.dark { background: var(--checker-dark); }
 
@@ -29,7 +30,9 @@
     transition: transform var(--spring), box-shadow var(--transition);
 }
 
-.piece:hover { transform: scale(1.08); }
+@media (hover: hover) {
+    .piece:hover { transform: scale(1.08); }
+}
 
 .piece.red {
     background: radial-gradient(circle at 35% 35%, #ff6b6b, var(--piece-red), #8b1a1a);

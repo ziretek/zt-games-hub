@@ -29,6 +29,7 @@ export class CheckersGame implements Game {
   private wins: Record<string, number>;
   private _aiTimer: ReturnType<typeof setTimeout> | null = null;
   private _boundClick: ((e: MouseEvent) => void) | null = null;
+  private _boundAiToggle: ((e: Event) => void) | null = null;
 
   constructor() {
     this.el = document.getElementById('checkerGame')!;
@@ -45,6 +46,11 @@ export class CheckersGame implements Game {
         this.onCellClick(+cell.dataset.r!, +cell.dataset.c!);
       };
       this.el.addEventListener('click', this._boundClick);
+    }
+    if (!this._boundAiToggle) {
+      this._boundAiToggle = () => this.toggleComputer();
+      const btn = document.getElementById('vsComputerBtn');
+      if (btn) btn.addEventListener('click', this._boundAiToggle);
     }
   }
 
@@ -395,7 +401,15 @@ export class CheckersGame implements Game {
 
   pause(): void { if (this._aiTimer) { clearTimeout(this._aiTimer); this._aiTimer = null; } }
   resume(): void { this.state = 'playing'; }
-  destroy(): void { this.pause(); if (this._boundClick && this.el) { this.el.removeEventListener('click', this._boundClick); this._boundClick = null; } }
+  destroy(): void {
+    this.pause();
+    if (this._boundClick && this.el) { this.el.removeEventListener('click', this._boundClick); this._boundClick = null; }
+    if (this._boundAiToggle) {
+      const btn = document.getElementById('vsComputerBtn');
+      if (btn) btn.removeEventListener('click', this._boundAiToggle);
+      this._boundAiToggle = null;
+    }
+  }
 }
 
 registerGame(

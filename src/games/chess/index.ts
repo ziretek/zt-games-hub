@@ -556,7 +556,7 @@ export class ChessGame implements Game {
 
     let bestScore = -Infinity;
     let bestMove: ChessMove | null = null;
-    const alpha = -Infinity;
+    let alpha = -Infinity;
     const beta = Infinity;
 
     for (const move of ordered) {
@@ -567,6 +567,7 @@ export class ChessGame implements Game {
         bestScore = score;
         bestMove = move;
       }
+      if (score > alpha) alpha = score;
     }
 
     if (bestMove) {

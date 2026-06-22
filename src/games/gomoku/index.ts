@@ -28,7 +28,7 @@ export class GomokuGame implements Game {
     this._winCells = []; this.state = 'playing';
     this.render();
     if (this.aiEnabled && this.currentPlayer === 'black')
-      this._aiTimer = setTimeout(() => { this._aiTimer = null; if (!this.gameOver) this.makeMove(7, 7); }, 200);
+      this._aiTimer = setTimeout(() => { this._aiTimer = null; if (!this.gameOver && this.currentPlayer === 'black' && !this.board[7][7]) this.makeMove(7, 7); }, 200);
   }
 
   private inBounds(r: number, c: number): boolean { return r >= 0 && r < this.size && c >= 0 && c < this.size; }

@@ -21,8 +21,8 @@ export class BattleshipGame implements Game {
   private enemyHits = 0;
   private playerTargets: boolean[][] = [];
   private enemyTargets: boolean[][] = [];
+  private p1Grid: number[][] = [];
   private p2Grid: number[][] = [];
-  private p2Ships: number[][] = [];
   private p2Hits = 0;
   private p2Targets: boolean[][] = [];
   private gameOver = false;
@@ -43,9 +43,9 @@ export class BattleshipGame implements Game {
     this.placingShip = 0; this.placingDir = 0;
     this.playerGrid = Array.from({ length: this.size }, () => Array(this.size).fill(0));
     this.enemyGrid = Array.from({ length: this.size }, () => Array(this.size).fill(0));
+    this.p1Grid = Array.from({ length: this.size }, () => Array(this.size).fill(0));
     this.p2Grid = Array.from({ length: this.size }, () => Array(this.size).fill(0));
     this.enemyShips = this.placeShipsRandom();
-    this.p2Ships = this.placeShipsRandom();
     this.playerHits = 0; this.enemyHits = 0; this.p2Hits = 0;
     this.playerTargets = Array.from({ length: this.size }, () => Array(this.size).fill(false));
     this.enemyTargets = Array.from({ length: this.size }, () => Array(this.size).fill(false));
@@ -105,9 +105,10 @@ export class BattleshipGame implements Game {
   private p2Move(r: number, c: number): void {
     if (this.phase !== 'play' || this.gameOver || this.p2Targets[r][c]) return;
     this.p2Targets[r][c] = true;
-    const ships = this.vsComputer ? this.playerGrid : this.playerGrid;
-    if (ships[r][c] > 0) { this.playerGrid[r][c] = 2; this.p2Hits++; this.checkWin(); }
-    else { this.playerGrid[r][c] = 1; }
+    const ships = this.vsComputer ? this.playerGrid : this.p1Grid;
+    const display = this.vsComputer ? this.playerGrid : this.p1Grid;
+    if (ships[r][c] > 0) { display[r][c] = 2; this.p2Hits++; this.checkWin(); }
+    else { display[r][c] = 1; }
     this.render();
     if (!this.gameOver && this.turnEl) this.turnEl.textContent = 'Your turn, P1';
   }
@@ -117,7 +118,7 @@ export class BattleshipGame implements Game {
     const targets = this.vsComputer ? this.playerTargets : this.p2Targets;
     if (targets[r][c]) return;
     targets[r][c] = true;
-    const ships = this.vsComputer ? this.enemyShips : this.p2Ships;
+    const ships = this.vsComputer ? this.enemyShips : this.p2Grid;
     if (ships[r][c] > 0) { this.enemyGrid[r][c] = 2; this.playerHits++; this.checkWin(); }
     else { this.enemyGrid[r][c] = 1; }
     this.render();
@@ -153,6 +154,7 @@ export class BattleshipGame implements Game {
   private checkWin(): void {
     if (this.playerHits >= 17) { this.gameOver = true; if (this.turnEl) { this.turnEl.textContent = this.vsComputer ? 'You win!' : 'P1 wins!'; this.turnEl.style.color = '#ffd700'; } this.state = 'won'; }
     if (this.enemyHits >= 17) { this.gameOver = true; if (this.turnEl) { this.turnEl.textContent = this.vsComputer ? 'Computer wins!' : 'P2 wins!'; this.turnEl.style.color = '#ff6b6b'; } this.state = 'lost'; }
+    if (this.p2Hits >= 17) { this.gameOver = true; if (this.turnEl) { this.turnEl.textContent = 'P2 wins!'; this.turnEl.style.color = '#ff6b6b'; } this.state = 'lost'; }
     if (this.gameOver) this.render();
   }
 
@@ -164,7 +166,7 @@ export class BattleshipGame implements Game {
     this.placingShip++;
     if (this.placingShip >= this.ships.length) {
       if (this.vsComputer) { this.phase = 'play'; if (this.turnEl) this.turnEl.textContent = 'Your turn'; }
-      else { this.placingShip = 0; this.placingDir = 0; this.playerGrid = this.p2Grid; if (this.turnEl) this.turnEl.textContent = 'P2: Place ship: ' + this.ships[0]; }
+      else { this.placingShip = 0; this.placingDir = 0; this.p1Grid = this.playerGrid.map(r => [...r]); this.playerGrid = this.p2Grid; if (this.turnEl) this.turnEl.textContent = 'P2: Place ship: ' + this.ships[0]; }
     }
     this.render();
   }
@@ -178,7 +180,8 @@ export class BattleshipGame implements Game {
       sections.push([this.playerGrid === this.p2Grid ? this.p2Grid : this.playerGrid, this.playerGrid === this.p2Grid ? 'P2 Fleet' : 'Your Fleet', false]);
       if (!this.vsComputer) sections.push([this.enemyGrid, 'Enemy Waters', false]);
     } else {
-      sections.push([this.playerGrid, this.vsComputer ? 'Your Fleet' : 'P1\'s Fleet', !this.vsComputer && !this.gameOver]);
+      const p1DisplayGrid = this.vsComputer ? this.playerGrid : this.p1Grid;
+      sections.push([p1DisplayGrid, this.vsComputer ? 'Your Fleet' : 'P1\'s Fleet', !this.vsComputer && !this.gameOver]);
       sections.push([this.enemyGrid, this.vsComputer ? 'Enemy Waters' : 'P2\'s Waters', !this.gameOver]);
     }
     for (const [grid, label, clickable] of sections) {
@@ -190,9 +193,9 @@ export class BattleshipGame implements Game {
         const val = grid[r][c];
         if (val === 1) cell.classList.add('bs-miss');
         else if (val === 2) cell.classList.add('bs-hit');
-        if (grid === this.playerGrid || grid === this.p2Grid) { if (val >= 1) cell.classList.add('bs-ship'); }
+        if (grid === this.playerGrid || grid === this.p2Grid || grid === this.p1Grid) { if (val >= 1) cell.classList.add('bs-ship'); }
         if (clickable) {
-          if (grid === this.playerGrid) cell.addEventListener('click', () => this.p2Move(r, c));
+          if (grid === this.playerGrid || grid === this.p1Grid) cell.addEventListener('click', () => this.p2Move(r, c));
           else cell.addEventListener('click', () => this.playerMove(r, c));
         }
         if (grid === this.playerGrid && this.phase === 'place' && this.playerGrid !== this.p2Grid) cell.addEventListener('click', () => this.placeShip(r, c));
