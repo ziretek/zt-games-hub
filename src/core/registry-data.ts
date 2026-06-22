@@ -30,7 +30,7 @@ export const GAMES: GameEntry[] = [
   { id: 'tictactoe',     name: 'Tic-Tac-Toe',     category: 'board',  icon: '❌⭕', desc: 'Three in a row',           accent: '96, 165, 250', needsNewBtn: true, needsAiBtn: true, needsRecreate: false },
   { id: 'hangman',       name: 'Hangman',         category: 'puzzle', icon: '🪢',  desc: 'Guess the word',          accent: '249, 168, 212', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
   { id: 'game2048',      name: '2048',            category: 'puzzle', icon: '🔢',  desc: 'Merge the tiles',         accent: '242, 177, 121', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
-  { id: 'pong',          name: 'Pong',            category: 'arcade', icon: '🏓',  desc: 'Classic paddle game',     accent: '96, 165, 250', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
+  { id: 'pong',          name: 'Pong',            category: 'arcade', icon: '🏓',  desc: 'Classic paddle game',     accent: '96, 165, 250', needsNewBtn: true, needsAiBtn: true, needsRecreate: true },
   { id: 'breakout',      name: 'Breakout',        category: 'arcade', icon: '🧱',  desc: 'Break all bricks',        accent: '231, 76, 60', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'othello',       name: 'Othello',         category: 'board',  icon: '⚫⚪', desc: 'Flip the board',          accent: '45, 90, 39', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
   { id: 'battleship',    name: 'Battleship',      category: 'board',  icon: '🚢',  desc: 'Sink the fleet',          accent: '100, 180, 255', needsNewBtn: true, needsAiBtn: true, needsRecreate: false },

@@ -20,6 +20,10 @@ export class PongGame implements Game {
   private _keyState: Set<string> = new Set();
   private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
   private _keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
+  private aiEnabled = false;
+  private aiSpeed = 4;
+  private _aiBtn: HTMLElement | null = null;
+  private _boundAiToggle: (() => void) | null = null;
 
   constructor() {
     this.boardEl = document.getElementById('pong-board')!;
@@ -52,6 +56,11 @@ export class PongGame implements Game {
       this.canvas.addEventListener('mousemove', this._touchHandler);
       enableTouchOnCanvas(this.canvas);
     }
+    if (!this._boundAiToggle) {
+      this._boundAiToggle = () => { this.aiEnabled = !this.aiEnabled; if (this._aiBtn) this._aiBtn.textContent = 'AI: ' + (this.aiEnabled ? 'On' : 'Off'); };
+      this._aiBtn = document.getElementById('pong-ai-btn');
+      if (this._aiBtn) this._aiBtn.addEventListener('click', this._boundAiToggle);
+    }
     this.startLoop();
   }
 
@@ -69,8 +78,16 @@ export class PongGame implements Game {
   private update(): void {
     if (this._keyState.has('w') && this.paddle1.y > 0) this.paddle1.y -= 6;
     if (this._keyState.has('s') && this.paddle1.y < 400 - this.paddle1.h) this.paddle1.y += 6;
-    if (this._keyState.has('ArrowUp') && this.paddle2.y > 0) this.paddle2.y -= 6;
-    if (this._keyState.has('ArrowDown') && this.paddle2.y < 400 - this.paddle2.h) this.paddle2.y += 6;
+    if (!this.aiEnabled) {
+      if (this._keyState.has('ArrowUp') && this.paddle2.y > 0) this.paddle2.y -= 6;
+      if (this._keyState.has('ArrowDown') && this.paddle2.y < 400 - this.paddle2.h) this.paddle2.y += 6;
+    } else {
+      const target = this.ball.y - this.paddle2.h / 2;
+      const diff = target - this.paddle2.y;
+      if (Math.abs(diff) > this.aiSpeed) this.paddle2.y += Math.sign(diff) * this.aiSpeed;
+      else this.paddle2.y += diff;
+      this.paddle2.y = Math.max(0, Math.min(400 - this.paddle2.h, this.paddle2.y));
+    }
     this.ball.x += this.ball.dx;
     this.ball.y += this.ball.dy;
     if (this.ball.y - this.ball.r <= 0 || this.ball.y + this.ball.r >= 400) this.ball.dy = -this.ball.dy;
@@ -95,7 +112,7 @@ export class PongGame implements Game {
 
   pause(): void { if (this._animId !== null) { cancelAnimationFrame(this._animId); this._animId = null; } }
   resume(): void { this.state = 'playing'; if (this._animId === null) this.startLoop(); }
-  destroy(): void { this.pause(); if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler); if (this._keyUpHandler) document.removeEventListener('keyup', this._keyUpHandler); }
+  destroy(): void { this.pause(); if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler); if (this._keyUpHandler) document.removeEventListener('keyup', this._keyUpHandler); if (this._boundAiToggle && this._aiBtn) { this._aiBtn.removeEventListener('click', this._boundAiToggle); this._boundAiToggle = null; } }
 }
 
 registerGame(
