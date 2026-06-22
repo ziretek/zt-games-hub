@@ -50,3 +50,26 @@
 
 ### LOW Severity (fixed)
 - ✅ Orphaned `<canvas>` elements removed from index.html (Word Search, Hangman)
+
+## Sprint: Jun 23 — AI Bug Fixes & Mobile Redesign (COMPLETED)
+
+### AI Bugs Fixed
+- ✅ **Checkers** — AI toggle button `#vsComputerBtn` not wired to `toggleComputer()` click handler
+- ✅ **Chess** — Alpha-beta pruning disabled at top level (`const alpha` never updated through move loop)
+- ✅ **Battleship** — PvP mode: P1 ship positions lost on grid reassignment; `p2Move`/`playerMove` used wrong ship grids; `p2Hits` not checked in `checkWin()`
+- ✅ **Gomoku** — Init center-move timeout could fire after human already played (added `currentPlayer` + `board[7][7]` guard)
+- ✅ **Connect4** — AI toggle button not wired
+- ✅ **TicTacToe** — AI toggle button not wired
+- ✅ **Pong** — Added AI opponent (right paddle tracks ball); AI toggle button added
+
+### Mobile Thumb-Friendly Redesign
+- ✅ **Global controls** — All game action buttons: `min-height: 44px` (was ~26px); back button: `min-height: 44px` (was 29px)
+- ✅ **Board cell size bumps at 380px:** Gomoku 22px, Battleship 32px, Connect4 40px, Othello 40px, Minesweeper 36px, Chess 280px board, Checkers 280px board, Sudoku 280px, Mastermind palette 36px
+- ✅ **Canvas DPR scaling** — 9 games now retina-sharp (Pong, Breakout, Invaders, Flappy, Dino, PenaltyKicker, Bowling, Archery, Baseball) via `src/utils/dpr.ts`
+- ✅ **Wordle keyboard** — Keys 28px min-width (was 22px), 32px height (was 28px)
+- ✅ **PWA safe-area insets** — `env(safe-area-inset-top/bottom)` added to `#game-view`, `#game-hub`, `.gw.standalone`
+- ✅ **Vertical space reclaimed** — Game view padding 20→16px, header margin 16→12px, wrapper gap 12→8px
+- ✅ **New Game buttons** — All 32 button IDs aligned to `{gameId}-new-btn` pattern
+- ✅ **Viewport** — Added `maximum-scale=1.0` to prevent iOS auto-zoom
+- ✅ **Gomoku overflow** — Fixed 15×15 grid exceeding 380px viewport (gap 1→0px)
+- ✅ **Sprint** — Added `touch-action: manipulation`
