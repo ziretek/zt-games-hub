@@ -12,7 +12,16 @@
 - (none recorded)
 
 ## Security Vulnerabilities
-- (none recorded)
+- (none recorded — audit date: Jun 22, 2026)
+
+## Security Audit — All FIXED
+### Dependencies
+- `npm audit`: 1 LOW advisory (esbuild on Windows only — N/A on macOS)
+### Codebase fixes applied:
+- ✅ **MEDIUM** — Added X-Frame-Options: DENY, CSP, X-Content-Type-Options, Referrer-Policy to vercel.json
+- ✅ **LOW** — Replaced inline onclick with addEventListener in main.ts
+- ✅ **INFO** — Moved playwright from dependencies to devDependencies
+- **INFO** (no fix needed) — Game instances on window is intentional for game access; innerHTML uses hardcoded constants
 
 ## Active Sprints
 - Sprint: Mobile Mode QA Test (completed)

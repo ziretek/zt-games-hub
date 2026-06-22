@@ -48,6 +48,11 @@ if (installBtn) {
   });
 }
 
+const pwaUpdate = document.getElementById('pwa-update');
+if (pwaUpdate) {
+  pwaUpdate.addEventListener('click', () => location.reload());
+}
+
 // Keyboard shortcuts for snake
 document.addEventListener('keydown', (e: KeyboardEvent) => {
   const snakeWrapper = document.getElementById('snake-wrapper');
