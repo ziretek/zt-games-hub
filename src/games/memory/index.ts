@@ -27,6 +27,7 @@ export class MemoryGame implements Game {
   }
 
   init(): void {
+    if (this._flipTimer) { clearTimeout(this._flipTimer); this._flipTimer = null; }
     this.cards = [...MEMORY_ICONS, ...MEMORY_ICONS];
     for (let i = this.cards.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));

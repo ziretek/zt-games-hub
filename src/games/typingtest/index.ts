@@ -27,8 +27,8 @@ export class TypingTestGame implements Game {
 
   constructor() {
     this.boardEl = document.getElementById('typingtest-board')!;
-    this.turnEl = document.getElementById('ttest-turn');
-    this.scoreEl = document.getElementById('ttest-score');
+    this.turnEl = document.getElementById('typingtest-wpm');
+    this.scoreEl = document.getElementById('typingtest-accuracy');
   }
 
   init(): void {
@@ -77,6 +77,7 @@ export class TypingTestGame implements Game {
       input.className = 'ttest-input';
       input.style.cssText = 'display:block;margin:15px auto;padding:12px;font-size:18px;width:90%;height:60px;border:2px solid var(--border);border-radius:8px;background:var(--glass);color:#fff;font-family:monospace;resize:none;';
       input.addEventListener('input', () => this.handleInput(input.value));
+      input.addEventListener('touchstart', () => { input.focus(); }, { passive: true });
       this.boardEl.appendChild(input);
       input.focus();
       if (this.turnEl) this.turnEl.textContent = 'Start typing...';

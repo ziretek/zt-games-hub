@@ -261,6 +261,17 @@ export type Theme = 'marvel' | 'neural' | 'gradient';
 let currentBackground: Background | null = null;
 
 export function switchTheme(theme: Theme): void {
+  const canvas = document.getElementById('aiBackground') as HTMLCanvasElement | null;
+  if (canvas) {
+    const overlay = document.createElement('canvas');
+    overlay.width = canvas.width;
+    overlay.height = canvas.height;
+    const octx = overlay.getContext('2d')!;
+    octx.drawImage(canvas, 0, 0);
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;transition:opacity 0.4s ease;pointer-events:none;';
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => { overlay.style.opacity = '0'; setTimeout(() => overlay.remove(), 400); });
+  }
   if (currentBackground) currentBackground.destroy();
   switch (theme) {
     case 'marvel': currentBackground = new MarvelBackground('aiBackground'); break;
@@ -268,7 +279,10 @@ export function switchTheme(theme: Theme): void {
     case 'gradient': currentBackground = new GradientBackground('aiBackground'); break;
   }
   document.querySelectorAll('.theme-btn').forEach(b => {
-    b.classList.toggle('active', (b as HTMLElement).dataset.theme === theme);
+    const el = b as HTMLElement;
+    const isActive = el.dataset.theme === theme;
+    el.classList.toggle('active', isActive);
+    el.setAttribute('aria-checked', String(isActive));
   });
 }
 
@@ -276,6 +290,11 @@ export function initBackground(): void {
   currentBackground = new MarvelBackground('aiBackground');
 }
 
-export function destroyBackground(): void {
-  if (currentBackground) { currentBackground.destroy(); currentBackground = null; }
+export function pauseBackground(): void {
+  currentBackground?.pause();
 }
+
+export function resumeBackground(): void {
+  currentBackground?.resume();
+}
+

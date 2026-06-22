@@ -1,6 +1,7 @@
 import { GAMES, GAME_MAP, CATEGORIES } from './registry-data.js';
 import { loadJson, saveJson } from '../utils/storage.js';
 import { getGameConstructor } from './registry.js';
+import { gameChunks } from './lazy-load.js';
 
 let _activeFilter = 'all';
 
@@ -34,19 +35,24 @@ export function buildHub(): void {
       const card = document.createElement('div');
       card.className = 'game-card';
       card.dataset.game = g.id;
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `${g.icon} ${g.name}: ${g.desc}`);
       card.style.setProperty('--card-accent', g.accent);
       card.style.animationDelay = `${0.04 * (idx + 1)}s`;
       card.innerHTML = `
         <div class="game-card-accent"></div>
         <div class="game-card-bg"></div>
         <div class="game-card-content">
-          <div class="game-card-icon">${g.icon}</div>
+          <div class="game-card-icon" aria-hidden="true">${g.icon}</div>
           <div class="game-card-title">${g.name}</div>
           <div class="game-card-desc">${g.desc}</div>
         </div>
-
       `;
       card.addEventListener('click', () => showGame(g.id));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showGame(g.id); }
+      });
       cards.appendChild(card);
     });
 
@@ -81,7 +87,7 @@ function getRecentGames(): string[] {
   return loadJson<string[]>('recentGames', []);
 }
 
-export function updateRecentDisplay(): void {
+function updateRecentDisplay(): void {
   const el = document.getElementById('hub-recent');
   if (!el) return;
   const recent = getRecentGames();
@@ -92,24 +98,40 @@ export function updateRecentDisplay(): void {
 
 export function showHub(): void {
   pauseAll();
-  if (typeof window.snakeGame !== 'undefined') {
-    const sg = window.snakeGame as { destroy?: () => void };
-    if (sg?.destroy) sg.destroy();
+  for (const g of GAMES) {
+    const key = g.id + 'Game';
+    const inst = window[key] as { destroy?: () => void } | undefined;
+    if (inst?.destroy) inst.destroy();
+    delete window[key];
   }
   const hub = document.getElementById('game-hub');
   const view = document.getElementById('game-view');
-  if (hub) hub.style.display = 'flex';
-  if (view) view.style.display = 'none';
-  document.querySelectorAll('.gw').forEach(el => el.classList.remove('active'));
-  updateRecentDisplay();
-  const searchInput = document.getElementById('hub-search-input') as HTMLInputElement | null;
-  if (searchInput) searchInput.value = '';
-  document.querySelectorAll('.game-card').forEach(c => (c as HTMLElement).style.display = '');
-  document.querySelectorAll('.category').forEach(c => {
-    (c as HTMLElement).style.display = '';
-    c.classList.remove('hidden');
-  });
-  setFilter(_activeFilter);
+  const wrapper = document.querySelector('.gw.active') as HTMLElement | null;
+  if (view) {
+    view.classList.remove('view-enter');
+    view.classList.add('view-exit');
+  }
+  if (wrapper) wrapper.classList.remove('active');
+  setTimeout(() => {
+    if (hub) {
+      hub.style.display = 'flex';
+      hub.classList.remove('hub-exit');
+      void hub.offsetHeight;
+    }
+    if (view) {
+      view.style.display = 'none';
+      view.classList.remove('view-exit');
+    }
+    updateRecentDisplay();
+    const searchInput = document.getElementById('hub-search-input') as HTMLInputElement | null;
+    if (searchInput) { searchInput.value = ''; searchInput.focus(); }
+    document.querySelectorAll('.game-card').forEach(c => (c as HTMLElement).style.display = '');
+    document.querySelectorAll('.category').forEach(c => {
+      (c as HTMLElement).style.display = '';
+      c.classList.remove('hidden');
+    });
+    setFilter(_activeFilter);
+  }, 250);
 }
 
 export function showGame(id: string): void {
@@ -117,36 +139,80 @@ export function showGame(id: string): void {
   if (!entry) return;
 
   pauseAll();
+  for (const g of GAMES) {
+    const key = g.id + 'Game';
+    const inst = window[key] as { destroy?: () => void } | undefined;
+    if (inst?.destroy) inst.destroy();
+    delete window[key];
+  }
   const hub = document.getElementById('game-hub');
   const view = document.getElementById('game-view');
-  if (hub) hub.style.display = 'none';
-  if (view) view.style.display = 'flex';
-  document.querySelectorAll('.gw').forEach(el => el.classList.remove('active'));
-  const target = document.getElementById(id + '-wrapper');
-  if (target) target.classList.add('active');
-  const title = document.getElementById('game-view-title');
-  if (title) title.textContent = entry.name;
-
-  addRecentGame(id);
-
-  const key = id + 'Game';
-  if (!window[key]) {
-    const Ctor = getGameConstructor(id);
-    if (Ctor) {
-      const inst = new Ctor() as { init?: () => void };
-      window[key] = inst;
-      inst.init?.();
+  if (hub) hub.classList.add('hub-exit');
+  setTimeout(() => {
+    if (hub) hub.style.display = 'none';
+    if (view) {
+      view.style.display = 'flex';
+      void view.offsetHeight;
+      view.classList.add('view-enter');
     }
-  } else {
-    const inst = window[key] as { init?: () => void } | undefined;
-    if (inst?.init) inst.init();
-  }
+    document.querySelectorAll('.gw').forEach(el => el.classList.remove('active'));
+    const target = document.getElementById(id + '-wrapper');
+    if (target) {
+      target.classList.remove('active');
+      void target.offsetHeight;
+      target.classList.add('active');
+    }
+    const title = document.getElementById('game-view-title');
+    if (title) title.textContent = entry.name;
+
+    const backBtn = document.getElementById('back-btn');
+    if (backBtn) setTimeout(() => backBtn.focus(), 50);
+
+    addRecentGame(id);
+
+    const key = id + 'Game';
+    const loader = gameChunks[id];
+    if (!window[key] && loader) {
+      loader().then(() => {
+        const Ctor = getGameConstructor(id);
+        if (Ctor) {
+          const inst = new Ctor() as { init?: () => void };
+          window[key] = inst;
+          inst.init?.();
+        }
+      }).catch((e: unknown) => {
+        console.error(`Failed to load game ${id}:`, e);
+        const titleEl = document.getElementById('game-view-title');
+        if (titleEl) titleEl.textContent = 'Failed to load game';
+        const gameContainer = document.getElementById('game-view');
+        if (gameContainer) {
+          const errDiv = document.createElement('div');
+          errDiv.style.cssText = 'text-align:center;padding:40px;color:#ef4444';
+          errDiv.textContent = `Could not load "${id}". Please try again.`;
+          gameContainer.appendChild(errDiv);
+        }
+      });
+    } else if (!window[key]) {
+      const Ctor = getGameConstructor(id);
+      if (Ctor) {
+        const inst = new Ctor() as { init?: () => void };
+        window[key] = inst;
+        inst.init?.();
+      }
+    } else {
+      const inst = window[key] as { init?: () => void } | undefined;
+      if (inst?.init) inst.init();
+    }
+  }, 250);
 }
 
 export function setFilter(filter: string): void {
   _activeFilter = filter;
   document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', (b as HTMLElement).dataset.filter === filter);
+    const el = b as HTMLElement;
+    const isActive = el.dataset.filter === filter;
+    el.classList.toggle('active', isActive);
+    el.setAttribute('aria-selected', String(isActive));
   });
   document.querySelectorAll('.category').forEach(section => {
     const sec = section as HTMLElement;
@@ -158,8 +224,6 @@ export function setFilter(filter: string): void {
   });
   applySearch();
 }
-
-export function getActiveFilter(): string { return _activeFilter; }
 
 export function applySearch(): void {
   const input = document.getElementById('hub-search-input') as HTMLInputElement | null;

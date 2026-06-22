@@ -18,13 +18,14 @@ export class SimonGame implements Game {
 
   constructor() {
     this.boardEl = document.getElementById('simon-board')!;
-    this.turnEl = document.getElementById('simon-turn');
+    this.turnEl = document.getElementById('sim-status');
   }
 
   init(): void {
     this.sequence = []; this.playerIndex = 0; this.round = 0; this.playing = false; this.gameOver = false;
     this.state = 'playing';
     this._timeouts.forEach(clearTimeout); this._timeouts = [];
+    this.render();
     this.nextRound();
   }
 
@@ -75,7 +76,16 @@ export class SimonGame implements Game {
   }
 
   pause(): void { this._timeouts.forEach(clearTimeout); this._timeouts = []; }
-  resume(): void { this.state = 'playing'; }
+  resume(): void {
+    if (this.gameOver) { this.state = 'idle'; return; }
+    this.state = 'playing';
+    if (this._isShowing) {
+      this.sequence.forEach((color, i) => {
+        this._timeouts.push(setTimeout(() => { this.flash(color); if (i === this.sequence.length - 1) { setTimeout(() => { this._isShowing = false; if (this.turnEl) this.turnEl.textContent = 'Your turn!'; }, 400); } }, (i + 1) * 800));
+      });
+      setTimeout(() => { this.playing = true; }, this.sequence.length * 800 + 400);
+    }
+  }
   destroy(): void { this._timeouts.forEach(clearTimeout); this._timeouts = []; }
 }
 

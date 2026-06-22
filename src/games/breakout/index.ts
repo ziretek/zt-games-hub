@@ -52,6 +52,7 @@ export class BreakoutGame implements Game {
 
   private startLoop(): void {
     const loop = () => {
+      if (document.hidden) { this._animId = requestAnimationFrame(loop); return; }
       if (this.state !== 'playing') { this._animId = null; return; }
       this.update();
       this.render();

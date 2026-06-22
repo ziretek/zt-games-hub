@@ -1,37 +1,52 @@
 import { buildHub, showHub, showGame, setFilter, applySearch } from './core/hub.js';
-import { initBackground, switchTheme } from './core/backgrounds.js';
+import { initBackground, switchTheme, pauseBackground, resumeBackground } from './core/backgrounds.js';
 import { GAMES } from './core/registry-data.js';
-import './games/memory/index.js';
-import './games/snake/index.js';
-import './games/checkers/index.js';
-import './games/connect4/index.js';
-import './games/tictactoe/index.js';
-import './games/othello/index.js';
-import './games/battleship/index.js';
-import './games/gomoku/index.js';
-import './games/minesweeper/index.js';
-import './games/hangman/index.js';
-import './games/game2048/index.js';
-import './games/simon/index.js';
-import './games/mastermind/index.js';
-import './games/pong/index.js';
-import './games/breakout/index.js';
-import './games/invaders/index.js';
-import './games/flappy/index.js';
-import './games/dino/index.js';
-import './games/countmaster/index.js';
-import './games/wordle/index.js';
-import './games/boggle/index.js';
-import './games/anagrams/index.js';
-import './games/wordsearch/index.js';
-import './games/typingtest/index.js';
-import './games/spellingbee/index.js';
-import './games/penaltykicker/index.js';
-import './games/basketball/index.js';
-import './games/sprint/index.js';
-import './games/bowling/index.js';
-import './games/archery/index.js';
-import './games/baseball/index.js';
+import './core/lazy-load.js';
+
+// Global error handler — catches uncaught exceptions and promise rejections
+window.addEventListener('error', (e) => {
+  console.error('[Global Error]', e.error || e.message);
+  const container = document.getElementById('game-view');
+  if (container) {
+    let errEl = document.getElementById('global-error');
+    if (!errEl) {
+      errEl = document.createElement('div');
+      errEl.id = 'global-error';
+      errEl.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#ef4444;color:#fff;padding:8px 16px;font-size:14px;z-index:9999;text-align:center';
+      document.body.appendChild(errEl);
+    }
+    errEl.textContent = 'Something went wrong. Try reloading the page.';
+    errEl.style.display = 'block';
+    setTimeout(() => { if (errEl) errEl.style.display = 'none'; }, 8000);
+  }
+});
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('[Unhandled Rejection]', e.reason);
+});
+
+// PWA install prompt
+let deferredInstallPrompt: Event | null = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('install-app-btn');
+  if (btn) btn.classList.add('visible');
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  const btn = document.getElementById('install-app-btn');
+  if (btn) btn.classList.remove('visible');
+});
+const installBtn = document.getElementById('install-app-btn');
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (deferredInstallPrompt) {
+      (deferredInstallPrompt as Event & { prompt: () => Promise<void> }).prompt();
+      const result = await (deferredInstallPrompt as Event & { userChoice: Promise<{ outcome: string }> }).userChoice;
+      if (result.outcome === 'accepted') deferredInstallPrompt = null;
+    }
+  });
+}
 
 // Keyboard shortcuts for snake
 document.addEventListener('keydown', (e: KeyboardEvent) => {
@@ -52,7 +67,9 @@ document.addEventListener('keydown', (e: KeyboardEvent) => {
 // Pause backgrounds when tab hidden
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
-    // background pause is handled internally via requestAnimationFrame pause
+    pauseBackground();
+  } else {
+    resumeBackground();
   }
 });
 
@@ -84,8 +101,20 @@ window.addEventListener('load', () => {
   });
 
   const searchInput = document.getElementById('hub-search-input') as HTMLInputElement | null;
+  const searchClear = document.getElementById('hub-search-clear');
   if (searchInput) {
-    searchInput.addEventListener('input', applySearch);
+    searchInput.addEventListener('input', () => {
+      applySearch();
+      if (searchClear) searchClear.classList.toggle('visible', searchInput.value.length > 0);
+    });
+  }
+  if (searchClear && searchInput) {
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchClear.classList.remove('visible');
+      applySearch();
+      searchInput.focus();
+    });
   }
 
   const randomBtn = document.getElementById('hub-random-btn');
@@ -102,10 +131,21 @@ window.addEventListener('load', () => {
   const backBtn = document.getElementById('back-btn');
   if (backBtn) backBtn.addEventListener('click', showHub);
 
+  const hubTitle = document.querySelector('.hub-header h1');
+  if (hubTitle) hubTitle.addEventListener('click', showHub);
+
   const playAgainBtn = document.getElementById('checkers-play-again');
   if (playAgainBtn) {
     playAgainBtn.addEventListener('click', () => {
       const game = window.checkersGame as { newGame?: () => void } | undefined;
+      if (game?.newGame) game.newGame();
+    });
+  }
+
+  const chessPlayAgain = document.getElementById('chess-play-again');
+  if (chessPlayAgain) {
+    chessPlayAgain.addEventListener('click', () => {
+      const game = window.chessGame as { newGame?: () => void } | undefined;
       if (game?.newGame) game.newGame();
     });
   }

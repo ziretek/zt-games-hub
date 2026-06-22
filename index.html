@@ -2,10 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Game Hub - Collection of classic games">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="ZT Games Hub - 31 classic games">
     <meta name="theme-color" content="#7c3aed">
-    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ZT Games">
+    <meta name="msapplication-TileColor" content="#7c3aed">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
     <title>ZT Games Hub</title>
 </head>
@@ -20,29 +25,31 @@
                     <h1>ZT Games Hub</h1>
                     <p>Choose your game</p>
                 </div>
-                <div class="theme-switcher">
-                    <button class="theme-btn active" data-theme="marvel" title="Marvel">🎭</button>
-                    <button class="theme-btn" data-theme="neural" title="Neural">🧠</button>
-                    <button class="theme-btn" data-theme="gradient" title="Gradient">🎨</button>
+                <div class="theme-switcher" role="radiogroup" aria-label="Background theme">
+                    <button class="theme-btn active" data-theme="marvel" title="Marvel" aria-label="Marvel theme" role="radio" aria-checked="true">🎭</button>
+                    <button class="theme-btn" data-theme="neural" title="Neural" aria-label="Neural theme" role="radio" aria-checked="false">🧠</button>
+                    <button class="theme-btn" data-theme="gradient" title="Gradient" aria-label="Gradient theme" role="radio" aria-checked="false">🎨</button>
                 </div>
             </div>
             <div class="hub-toolbar">
-                <div class="hub-filter">
-                    <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="board">♟️ Board</button>
-                    <button class="filter-btn" data-filter="puzzle">🧩 Puzzle</button>
-                    <button class="filter-btn" data-filter="arcade">🕹️ Arcade</button>
-                    <button class="filter-btn" data-filter="word">📝 Word</button>
-                    <button class="filter-btn" data-filter="sports">⚽ Sports</button>
+                <div class="hub-filter" role="tablist" aria-label="Filter by category">
+                    <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
+                    <button class="filter-btn" data-filter="board" role="tab" aria-selected="false">♟️ Board</button>
+                    <button class="filter-btn" data-filter="puzzle" role="tab" aria-selected="false">🧩 Puzzle</button>
+                    <button class="filter-btn" data-filter="arcade" role="tab" aria-selected="false">🕹️ Arcade</button>
+                    <button class="filter-btn" data-filter="word" role="tab" aria-selected="false">📝 Word</button>
+                    <button class="filter-btn" data-filter="sports" role="tab" aria-selected="false">⚽ Sports</button>
                 </div>
                 <div class="hub-search">
-                    <input type="text" id="hub-search-input" placeholder="Search games..." spellcheck="false" />
+                    <input type="text" id="hub-search-input" placeholder="Search games..." spellcheck="false" aria-label="Search games" />
+                    <button id="hub-search-clear" aria-label="Clear search">✕</button>
                 </div>
             </div>
             <div class="hub-stats">
-                <span id="hub-game-count">30 games</span>
-                <span class="hub-recent" id="hub-recent">Recent: —</span>
+                <span id="hub-game-count" aria-live="polite">32 games</span>
+                <span class="hub-recent" id="hub-recent" aria-live="polite">Recent: —</span>
                 <button id="hub-random-btn" title="Random game">🎲</button>
+                <button id="install-app-btn" class="install-btn" title="Install app">⬇️</button>
             </div>
         </div>
     </div>
@@ -50,8 +57,8 @@
     <!-- Game View -->
     <div id="game-view">
         <div class="game-view-top">
-            <button class="back-btn" id="back-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+            <button class="back-btn" id="back-btn" aria-label="Back to game hub">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
                 Back
             </button>
             <span class="game-view-title" id="game-view-title">Checkers</span>
@@ -62,8 +69,8 @@
             <div id="checker-controls">
                 <button id="newGameBtn">New Game</button>
                 <button id="vsComputerBtn">Vs Computer: Off</button>
-                <div id="turnIndicator">Turn: Red</div>
-                <div id="scoreDisplay">Red: 12 | Black: 12</div>
+                <div id="turnIndicator" aria-live="polite">Turn: Red</div>
+                <div id="scoreDisplay" aria-live="polite">Red: 12 | Black: 12</div>
             </div>
             <div id="checker-board-container">
                 <div id="checkerGame" aria-label="Checker board" role="application"></div>
@@ -74,6 +81,24 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div id="chess-wrapper" class="gw">
+            <div id="chess-controls">
+                <button id="chess-new-btn">New Game</button>
+                <div id="chess-turn">Turn: White</div>
+                <div id="chess-status"></div>
+            </div>
+            <div id="chess-board-container">
+                <div id="chess-board"></div>
+                <div id="chess-overlay" style="display:none;">
+                    <div class="game-over-content">
+                        <div class="winner-text"></div>
+                        <button id="chess-play-again" class="play-again-btn">Play Again</button>
+                    </div>
+                </div>
+            </div>
+            <div id="chess-captured"></div>
         </div>
 
         <div id="connect4-wrapper" class="gw">
@@ -91,6 +116,7 @@
                 <button id="ms-flag-btn" class="flag-btn">🚩 Flag</button>
                 <div id="ms-mine-count">Mines: 10</div>
                 <div id="ms-timer">Time: 0</div>
+                <div id="ms-status"></div>
             </div>
             <div id="minesweeper-board"></div>
         </div>
@@ -130,8 +156,9 @@
             </div>
             <div id="hangman-board">
                 <canvas id="hangman-canvas" width="200" height="200"></canvas>
-                <div id="hang-word-display"></div>
+                <div id="hang-word"></div>
                 <div class="hang-keyboard"></div>
+                <div id="hang-letters"></div>
             </div>
         </div>
 
@@ -140,6 +167,7 @@
                 <button id="g2048-new-btn">New Game</button>
                 <div id="g2048-score">Score: 0</div>
                 <div id="g2048-best">Best: 0</div>
+                <div id="g2048-turn">Use arrow keys</div>
             </div>
             <div id="game2048-board"></div>
         </div>
@@ -149,6 +177,7 @@
                 <button id="pong-new-btn">New Game</button>
                 <div id="pong-score">0 - 0</div>
             </div>
+            <div id="pong-board"></div>
             <canvas id="pong-canvas" width="600" height="400"></canvas>
         </div>
 
@@ -158,6 +187,7 @@
                 <div id="break-score">Score: 0</div>
                 <div id="break-lives">Lives: 3</div>
             </div>
+            <div id="breakout-board"></div>
             <canvas id="breakout-canvas" width="480" height="320"></canvas>
         </div>
 
@@ -210,6 +240,7 @@
                 <div id="inv-score">Score: 0</div>
                 <div id="inv-lives">Lives: 3</div>
             </div>
+            <div id="invaders-board"></div>
             <canvas id="invaders-canvas" width="480" height="400"></canvas>
         </div>
 
@@ -219,6 +250,7 @@
                 <div id="flap-score">Score: 0</div>
                 <div id="flap-best">Best: 0</div>
             </div>
+            <div id="flappy-board"></div>
             <canvas id="flappy-canvas" width="320" height="480"></canvas>
         </div>
 
@@ -228,16 +260,17 @@
                 <div id="dino-score">Score: 0</div>
                 <div id="dino-best">Best: 0</div>
             </div>
+            <div id="dino-board"></div>
             <canvas id="dino-canvas" width="600" height="200"></canvas>
         </div>
 
         <div id="countmaster-wrapper" class="gw">
             <div id="countmaster-controls">
                 <button id="cm-new-btn">New Game</button>
-                <div id="cm-number">Number: 0</div>
+                <div id="cm-turn">Time: 60s</div>
                 <div id="cm-score">Score: 0</div>
             </div>
-            <canvas id="countmaster-canvas" width="360" height="540"></canvas>
+            <div id="countmaster-board"></div>
         </div>
 
         <!-- ====== Word Games ====== -->
@@ -247,10 +280,7 @@
                 <div id="wordle-message"></div>
                 <div id="wordle-stats"></div>
             </div>
-            <div id="wordle-game-area">
-                <div id="wordle-grid"></div>
-                <div id="wordle-keyboard"></div>
-            </div>
+            <div id="wordle-board"></div>
         </div>
 
         <div id="boggle-wrapper" class="gw">
@@ -258,13 +288,8 @@
                 <button id="boggle-new-btn">New Game</button>
                 <div id="boggle-timer">Time: 3:00</div>
                 <div id="boggle-score">Score: 0</div>
-                <div id="boggle-words">Words: </div>
             </div>
-            <canvas id="boggle-canvas" width="360" height="360"></canvas>
-            <div id="boggle-input-area">
-                <input id="boggle-word-input" type="text" placeholder="Type a word..." maxlength="16">
-                <button id="boggle-submit-btn">Submit</button>
-            </div>
+            <div id="boggle-board"></div>
         </div>
 
         <div id="anagrams-wrapper" class="gw">
@@ -304,10 +329,7 @@
                 <div id="typingtest-wpm">WPM: 0</div>
                 <div id="typingtest-accuracy">Acc: 100%</div>
             </div>
-            <div id="typingtest-game-area">
-                <div id="typingtest-words-display"></div>
-                <input id="typingtest-input" type="text" placeholder="Type the words here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-            </div>
+            <div id="typingtest-board"></div>
         </div>
 
         <div id="spellingbee-wrapper" class="gw">
@@ -315,17 +337,18 @@
                 <button id="spellingbee-new-btn">New Game</button>
                 <div id="spellingbee-score">Score: 0</div>
                 <div id="spellingbee-found">Words: 0</div>
-            </div>
-            <div id="spellingbee-game-area">
-                <div id="spellingbee-letters"></div>
-                <div id="spellingbee-input-row">
-                    <input id="spellingbee-input" type="text" placeholder="Type a word..." maxlength="12">
-                    <button id="spellingbee-submit">Submit</button>
-                    <button id="spellingbee-shuffle-btn">Shuffle</button>
-                </div>
                 <div id="spellingbee-message"></div>
-                <div id="spellingbee-word-list"></div>
             </div>
+            <div id="spellingbee-board"></div>
+        </div>
+        <div id="sudoku-wrapper" class="gw">
+            <div id="sudoku-controls">
+                <button id="sudoku-new-btn">New Game</button>
+                <div id="sudoku-diff">Easy</div>
+                <div id="sudoku-timer">Time: 0s</div>
+                <div id="sudoku-mistakes">Mistakes: 0</div>
+            </div>
+            <div id="sudoku-board"></div>
         </div>
 
         <!-- ====== Sports Games ====== -->
@@ -335,20 +358,10 @@
                 <div id="penaltykicker-score">Goals: 0 / 5</div>
                 <div id="penaltykicker-msg">Aim with mouse, click to shoot</div>
             </div>
+            <div id="penaltykicker-board"></div>
             <canvas id="penaltykicker-canvas" width="400" height="400"></canvas>
         </div>
 
-        <div id="basketball-wrapper" class="gw">
-            <div id="basketball-controls">
-                <button id="basketball-new-btn">New Game</button>
-                <div id="basketball-score">Score: 0</div>
-                <div id="basketball-streak">Streak: 0</div>
-                <div id="basketball-timer">Time: 30</div>
-                <div id="basketball-best">Best: 0</div>
-                <div id="basketball-acc">FG: 0/0</div>
-            </div>
-            <canvas id="basketball-canvas" width="400" height="500"></canvas>
-        </div>
 
         <div id="sprint-wrapper" class="gw">
             <div id="sprint-controls">
@@ -357,7 +370,7 @@
                 <div id="sprint-time">Time: 0.0s</div>
                 <div id="sprint-best">Best: 0.0s</div>
             </div>
-            <canvas id="sprint-canvas" width="600" height="300"></canvas>
+            <div id="sprint-board"></div>
         </div>
 
         <div id="bowling-wrapper" class="gw">
@@ -367,6 +380,7 @@
                 <div id="bowling-score">Score: 0</div>
                 <div id="bowling-msg">Click and drag down to bowl</div>
             </div>
+            <div id="bowling-board"></div>
             <canvas id="bowling-canvas" width="400" height="400"></canvas>
         </div>
 
@@ -377,6 +391,7 @@
                 <div id="archery-round">Round: 1 / 10</div>
                 <div id="archery-wind">Wind: 0.0</div>
             </div>
+            <div id="archery-board"></div>
             <canvas id="archery-canvas" width="500" height="400"></canvas>
         </div>
 
@@ -387,15 +402,14 @@
                 <div id="baseball-outs">Outs: 0 / 3</div>
                 <div id="baseball-inning">Inning: 1</div>
             </div>
+            <div id="baseball-board"></div>
             <canvas id="baseball-canvas" width="500" height="400"></canvas>
         </div>
     </div>
 
     <script type="module" src="/src/main.ts"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
-    </script>
+    <div id="pwa-update" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#7c3aed;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;z-index:9999;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);cursor:pointer" onclick="location.reload()">
+        A new version is available. Click to refresh.
+    </div>
 </body>
 </html>

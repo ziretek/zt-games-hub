@@ -21,6 +21,7 @@ export const CATEGORIES: Record<GameCategory, { icon: string; name: string; acce
 };
 
 export const GAMES: GameEntry[] = [
+  { id: 'chess',         name: 'Chess',          category: 'board',  icon: '♚',   desc: 'Classic chess with AI opponent', accent: '245, 158, 11', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
   { id: 'checkers',      name: 'Checkers',       category: 'board',  icon: '♟️',  desc: 'Capture all pieces',       accent: '245, 158, 11', needsNewBtn: true, needsAiBtn: true, needsRecreate: false },
   { id: 'connect4',      name: 'Connect 4',       category: 'board',  icon: '🔴🟡', desc: 'Four in a row',            accent: '239, 68, 68', needsNewBtn: false, needsAiBtn: true, needsRecreate: false },
   { id: 'minesweeper',   name: 'Minesweeper',     category: 'puzzle', icon: '💣',  desc: 'Find the mines',          accent: '34, 197, 94', needsNewBtn: false, needsAiBtn: false, needsRecreate: false },
@@ -46,8 +47,8 @@ export const GAMES: GameEntry[] = [
   { id: 'wordsearch',    name: 'Word Search',     category: 'word',   icon: '🔍',  desc: 'Find hidden words',       accent: '46, 204, 113', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'typingtest',    name: 'Typing Test',     category: 'word',   icon: '⌨️',  desc: 'Test your typing speed',  accent: '155, 89, 182', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'spellingbee',   name: 'Spelling Bee',    category: 'word',   icon: '🐝',  desc: 'Make words from letters',  accent: '232, 184, 0', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
+  { id: 'sudoku',        name: 'Sudoku',          category: 'puzzle', icon: '🧩',  desc: 'Classic number puzzle',    accent: '34, 197, 94', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
   { id: 'penaltykicker', name: 'Penalty Kicker',  category: 'sports', icon: '⚽',  desc: 'Score 5 penalties',       accent: '46, 204, 113', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
-  { id: 'basketball',    name: 'Basketball',      category: 'sports', icon: '🏀',  desc: 'Shoot hoops',             accent: '231, 76, 60', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'sprint',        name: 'Sprint',          category: 'sports', icon: '🏃',  desc: 'Tap to sprint',           accent: '52, 152, 219', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'bowling',       name: 'Bowling',         category: 'sports', icon: '🎳',  desc: 'Knock down pins',         accent: '155, 89, 182', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'archery',       name: 'Archery',         category: 'sports', icon: '🏹',  desc: 'Hit the target',          accent: '39, 174, 96', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },

@@ -115,6 +115,16 @@ export class BattleshipGame implements Game {
     if (this.gameOver) this.render();
   }
 
+  private placeShip(r: number, c: number): void {
+    if (this.placingShip >= this.ships.length) return;
+    const len = this.ships[this.placingShip];
+    if (!this.canPlace(this.playerGrid, r, c, len, this.placingDir)) return;
+    this.doPlace(this.playerGrid, r, c, len, this.placingDir, this.placingShip + 1);
+    this.placingShip++;
+    if (this.placingShip >= this.ships.length) { this.phase = 'play'; if (this.turnEl) this.turnEl.textContent = 'Your turn'; }
+    this.render();
+  }
+
   private rotateShip(): void { this.placingDir = this.placingDir === 0 ? 1 : 0; this.render(); }
 
   render(): void {
@@ -133,6 +143,7 @@ export class BattleshipGame implements Game {
         else if (val === 2) cell.classList.add('bs-hit');
         if (grid === this.playerGrid) { if (val >= 1) cell.classList.add('bs-ship'); }
         if (clickable) cell.addEventListener('click', () => this.playerMove(r, c));
+        if (grid === this.playerGrid && this.phase === 'place') cell.addEventListener('click', () => this.placeShip(r, c));
         g.appendChild(cell);
       }
       div.appendChild(g); this.boardEl.appendChild(div);

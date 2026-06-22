@@ -3,7 +3,7 @@ export function loadScore(key: string, fallback = 0): number {
 }
 
 export function saveScore(key: string, value: number): void {
-  localStorage.setItem(key, String(value));
+  try { localStorage.setItem(key, String(value)); } catch { /* storage full or unavailable */ }
 }
 
 export function loadJson<T>(key: string, fallback: T): T {
@@ -11,5 +11,5 @@ export function loadJson<T>(key: string, fallback: T): T {
 }
 
 export function saveJson(key: string, value: unknown): void {
-  localStorage.setItem(key, JSON.stringify(value));
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage full or unavailable */ }
 }

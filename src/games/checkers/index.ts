@@ -394,7 +394,7 @@ export class CheckersGame implements Game {
 
   pause(): void { if (this._aiTimer) { clearTimeout(this._aiTimer); this._aiTimer = null; } }
   resume(): void { this.state = 'playing'; }
-  destroy(): void { this.pause(); }
+  destroy(): void { this.pause(); if (this._boundClick && this.el) { this.el.removeEventListener('click', this._boundClick); this._boundClick = null; } }
 }
 
 registerGame(

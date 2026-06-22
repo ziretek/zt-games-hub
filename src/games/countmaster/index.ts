@@ -23,6 +23,7 @@ export class CountMasterGame implements Game {
     this.boardEl = document.getElementById('countmaster-board')!;
     this.turnEl = document.getElementById('cm-turn');
     this.scoreEl = document.getElementById('cm-score');
+    this.boardEl.style.touchAction = 'manipulation';
   }
 
   init(): void {
@@ -98,12 +99,14 @@ export class CountMasterGame implements Game {
 
     const pad = document.createElement('div');
     pad.style.cssText = 'display:grid;grid-template-columns:repeat(3,60px);gap:6px;justify-content:center;margin:10px 0;';
-    const keys = ['1','2','3','4','5','6','7','8','9','-','0','Enter'];
+    const keys = ['1','2','3','4','5','6','7','8','9','-','0','⌫','Enter'];
     for (const k of keys) {
       const btn = document.createElement('div');
       btn.textContent = k === 'Enter' ? '✓' : k;
+      const tapValue = k === '⌫' ? 'Backspace' : k;
       btn.style.cssText = 'padding:10px;text-align:center;font-size:20px;font-weight:700;border:2px solid var(--border);border-radius:8px;background:var(--glass);color:#fff;cursor:pointer;user-select:none;';
-      btn.addEventListener('click', () => this.handlePadTap(k));
+      btn.addEventListener('click', () => this.handlePadTap(tapValue));
+      btn.addEventListener('touchstart', (e) => { e.preventDefault(); this.handlePadTap(tapValue); }, { passive: false });
       pad.appendChild(btn);
     }
     this.boardEl.appendChild(pad);
@@ -113,7 +116,7 @@ export class CountMasterGame implements Game {
   }
 
   pause(): void { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
-  resume(): void { this.state = 'playing'; if (!this._timer) { this._timer = setInterval(() => { this.timeLeft--; if (this.timeLeft <= 0) { this.gameOver = true; this.state = 'idle'; if (this._timer) clearInterval(this._timer); this._timer = null; } this.render(); }, 1000); } }
+  resume(): void { if (this.gameOver || this.timeLeft <= 0) { this.state = 'idle'; return; } this.state = 'playing'; if (!this._timer) { this._timer = setInterval(() => { this.timeLeft--; if (this.timeLeft <= 0) { this.gameOver = true; this.state = 'idle'; if (this._timer) clearInterval(this._timer); this._timer = null; } this.render(); }, 1000); } }
   destroy(): void { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
 }
 

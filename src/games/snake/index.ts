@@ -30,6 +30,8 @@ export class SnakeGame implements Game {
   private speed = 280;
   private lastUpdate = 0;
   private loop: ((now: number) => void) | null = null;
+  private _touchStartHandler: ((e: TouchEvent) => void) | null = null;
+  private _touchEndHandler: ((e: TouchEvent) => void) | null = null;
 
   constructor() {
     this.canvas = document.getElementById('snake-canvas') as HTMLCanvasElement;
@@ -60,6 +62,7 @@ export class SnakeGame implements Game {
     if (this.animationId) cancelAnimationFrame(this.animationId);
     this.lastUpdate = performance.now();
     this.loop = (now: number) => {
+      if (document.hidden) { this.animationId = requestAnimationFrame(this.loop!); return; }
       if (now - this.lastUpdate > this.speed) {
         this.lastUpdate = now;
         this.update();
@@ -72,12 +75,13 @@ export class SnakeGame implements Game {
   }
 
   private addTouchControls(): void {
+    if (this._touchStartHandler) return;
     let sx = 0, sy = 0;
-    const onStart = (e: TouchEvent) => {
+    this._touchStartHandler = (e: TouchEvent) => {
       const t = e.touches[0];
       sx = t.clientX; sy = t.clientY;
     };
-    const onEnd = (e: TouchEvent) => {
+    this._touchEndHandler = (e: TouchEvent) => {
       if (this.gameOver) return;
       const t = e.changedTouches[0];
       const dx = t.clientX - sx, dy = t.clientY - sy;
@@ -87,8 +91,8 @@ export class SnakeGame implements Game {
         this.setDirection(0, dy > 0 ? 1 : -1);
       }
     };
-    this.canvas.addEventListener('touchstart', onStart, { passive: true });
-    this.canvas.addEventListener('touchend', onEnd, { passive: true });
+    this.canvas.addEventListener('touchstart', this._touchStartHandler, { passive: true });
+    this.canvas.addEventListener('touchend', this._touchEndHandler, { passive: true });
   }
 
   private spawnFood(): { x: number; y: number } | null {
@@ -195,13 +199,21 @@ export class SnakeGame implements Game {
     }
   }
 
-  pause(): void { this.destroy(); }
-  resume(): void { this.state = 'playing'; }
+  pause(): void { if (this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; } this.state = 'paused'; }
+  resume(): void { this.state = 'playing'; this.animationId = requestAnimationFrame(this.loop!); }
 
   destroy(): void {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
+    }
+    if (this._touchStartHandler) {
+      this.canvas.removeEventListener('touchstart', this._touchStartHandler);
+      this._touchStartHandler = null;
+    }
+    if (this._touchEndHandler) {
+      this.canvas.removeEventListener('touchend', this._touchEndHandler);
+      this._touchEndHandler = null;
     }
   }
 

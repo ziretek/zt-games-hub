@@ -15,7 +15,7 @@ export class SpellingBeeGame implements Game {
 
   constructor() {
     this.boardEl = document.getElementById('spellingbee-board')!;
-    this.turnEl = document.getElementById('spell-turn');
+    this.turnEl = document.getElementById('spellingbee-message');
   }
 
   init(): void {
@@ -50,6 +50,12 @@ export class SpellingBeeGame implements Game {
       utterance.rate = 0.8;
       speechSynthesis.speak(utterance);
     });
+    audioNote.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const utterance = new SpeechSynthesisUtterance(this.word);
+      utterance.rate = 0.8;
+      speechSynthesis.speak(utterance);
+    }, { passive: false });
     this.boardEl.appendChild(audioNote);
     const prompt = document.createElement('div');
     prompt.textContent = 'Click 🔊 to hear the word';
@@ -63,6 +69,7 @@ export class SpellingBeeGame implements Game {
       input.type = 'text'; input.className = 'spell-input';
       input.style.cssText = 'display:block;margin:15px auto;padding:10px;font-size:22px;text-align:center;text-transform:uppercase;border:2px solid var(--border);border-radius:8px;background:var(--glass);color:#fff;width:300px;letter-spacing:4px;';
       input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && input.value.length > 0) { this.submitGuess(input.value); input.value = ''; input.focus(); } });
+      input.addEventListener('touchstart', () => { input.focus(); }, { passive: true });
       this.boardEl.appendChild(input);
       input.focus();
       const actions = document.createElement('div'); actions.style.cssText = 'display:flex;justify-content:center;gap:10px;margin:10px;';
@@ -70,11 +77,13 @@ export class SpellingBeeGame implements Game {
       hintBtn.textContent = '💡 Hint (' + this.hints + ')';
       hintBtn.className = 'spell-btn';
       hintBtn.addEventListener('click', () => this.useHint());
+      hintBtn.addEventListener('touchstart', (e) => { e.preventDefault(); this.useHint(); }, { passive: false });
       if (this.hints <= 0) hintBtn.disabled = true;
       actions.appendChild(hintBtn);
       const skipBtn = document.createElement('button');
       skipBtn.textContent = 'Skip'; skipBtn.className = 'spell-btn';
       skipBtn.addEventListener('click', () => this.skip());
+      skipBtn.addEventListener('touchstart', (e) => { e.preventDefault(); this.skip(); }, { passive: false });
       actions.appendChild(skipBtn);
       this.boardEl.appendChild(actions);
     }

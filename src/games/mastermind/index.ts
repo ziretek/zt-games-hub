@@ -18,7 +18,7 @@ export class MastermindGame implements Game {
 
   constructor() {
     this.boardEl = document.getElementById('mastermind-board')!;
-    this.turnEl = document.getElementById('mm-turn');
+    this.turnEl = document.getElementById('mm-status');
   }
 
   init(): void {

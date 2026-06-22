@@ -20,7 +20,7 @@ export class HangmanGame implements Game {
     this.boardEl = document.getElementById('hangman-board')!;
     this.wordEl = document.getElementById('hang-word');
     this.lettersEl = document.getElementById('hang-letters');
-    this.turnEl = document.getElementById('hang-turn');
+    this.turnEl = document.getElementById('hang-status');
   }
 
   init(): void {
@@ -41,7 +41,8 @@ export class HangmanGame implements Game {
 
   render(): void {
     if (!this.boardEl) return;
-    this.boardEl.innerHTML = '';
+    const oldSvg = this.boardEl.querySelector('svg');
+    if (oldSvg) oldSvg.remove();
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 200 250'); svg.setAttribute('width', '200'); svg.setAttribute('height', '250');
     const draw = svg;
@@ -56,7 +57,7 @@ export class HangmanGame implements Game {
     if (this.remaining < 3) el('line', { x1: '140', y1: '105', x2: '170', y2: '130', stroke: '#666', 'stroke-width': '3' });
     if (this.remaining < 2) el('line', { x1: '140', y1: '150', x2: '115', y2: '190', stroke: '#666', 'stroke-width': '3' });
     if (this.remaining < 1) el('line', { x1: '140', y1: '150', x2: '165', y2: '190', stroke: '#666', 'stroke-width': '3' });
-    this.boardEl.appendChild(svg);
+    this.boardEl.insertBefore(svg, this.boardEl.firstChild);
 
     if (this.wordEl) {
       this.wordEl.textContent = this.word.split('').map(l => this.guessed.includes(l) ? l : '_').join(' ');

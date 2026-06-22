@@ -21,8 +21,8 @@ export class BoggleGame implements Game {
 
   constructor() {
     this.boardEl = document.getElementById('boggle-board')!;
-    this.turnEl = document.getElementById('bog-turn');
-    this.scoreEl = document.getElementById('bog-score');
+    this.turnEl = document.getElementById('boggle-timer');
+    this.scoreEl = document.getElementById('boggle-score');
     const wordList = ['THE','AND','ARE','FOR','NOT','YOU','ALL','ANY','CAN','HAD','HER','WAS','ONE','OUR','OUT','DAY','GET','HAS','HIM','HIS','HOW','ITS','MAY','NOW','OLD','SEE','WAY','WHO','BOY','DID','FAR','FIX','GOT','HOT','LET','MAN','MEN','PUT','RAN','SAT','SAY','SHE','TOO','TRY','USE','AGE','BAG','BIG','CAR','CAT','CUP','DOG','EGG','END','EYE','FAT','FIG','FLY','FUN','GUN','HAT','ICE','JOB','KEY','LAP','LEG','LID','LIP','MAP','MIX','NET','PEN','PIG','POT','RED','RUG','RUN','SKY','SUN','TIE','TOY','VAN','WAR','WET','WIN','ACE','ACT','ADD','AID','AIM','ANT','ARC','ARM','ART','ASK','ATE','BAD','BAG','BAN','BAR','BAT','BED','BET','BID','BIT','BOW','BOX','BUD','BUG','BUN','BUS','BUT','BUY','CAP','CAR','CAT','COP','COT','COW','CRY','CUB','CUP','CUT','DAM','DEW','DID','DIG','DIM','DIP','DOC','DOG','DOT','DRY','DUB','DUE','DUG','DUH','DUN','DUO','DYE','EAR','EAT','EEL','EGG','EGO','ELM','EMU','END','ERA','EVE','EWE','EYE','FAN','FAR','FAT','FAX','FED','FEE','FEW','FIG','FIN','FIR','FIT','FLU','FLY','FOB','FOE','FOG','FOR','FOX','FRY','FUN','FUR','GAG','GAP','GAS','GEL','GEM','GET','GIG','GIN','GNU','GOB','GOD','GOT','GUM','GUN','GUT','GUY','GYM','HAD','HAG','HAM','HAS','HAT','HAY','HEM','HEN','HER','HEW','HID','HIM','HIP','HIS','HIT','HOG','HOP','HOT','HOW','HUB','HUE','HUG','HUM','HUT','ICE','ICY','ILL','IMP','INK','INN','ION','IRE','IRK','ITS','IVY','JAB','JAG','JAM','JAR','JAW','JAY','JET','JEW','JOB','JOG','JOT','JOY','JUG','JUT','KEG','KEN','KEY','KID','KIN','KIT','LAB','LAD','LAG','LAP','LAW','LAY','LEA','LEG','LET','LID','LIE','LIP','LIT','LOG','LOT','LOW','LUG','MAD','MAN','MAP','MAR','MAT','MAW','MAX','MAY','MED','MEL','MEN','MET','MID','MIL','MIX','MOB','MOD','MOP','MOW','MUD','MUG','NAG','NAP','NAY','NET','NEW','NIL','NIT','NOD','NOR','NOT','NOW','NUB','NUN','NUT','OAK','OAR','OAT','ODD','ODE','OFF','OFT','OIL','OLD','ONE','OPT','ORB','ORE','OUR','OUT','OWE','OWL','OWN','PAD','PAL','PAN','PAP','PAR','PAT','PAW','PAY','PEA','PEG','PEN','PEP','PER','PET','PIE','PIG','PIN','PIT','PLY','POD','POP','POT','POW','PRO','PUB','PUG','PUN','PUP','PUT','RAG','RAM','RAN','RAP','RAT','RAW','RAY','RED','REF','RIB','RID','RIG','RIM','RIP','ROB','ROD','ROT','ROW','RUB','RUG','RUN','RUT','SAC','SAD','SAG','SAP','SAT','SAW','SAY','SEA','SET','SEW','SHE','SHY','SIN','SIP','SIS','SIT','SIX','SKI','SKY','SLY','SOB','SOD','SON','SOP','SOT','SOW','SOY','SPA','SPY','STY','SUB','SUM','SUN','SUP','TAB','TAG','TAN','TAP','TAR','TAT','TAX','TEA','TEN','THE','TIE','TIN','TIP','TOE','TON','TOO','TOP','TOW','TOY','TRY','TUB','TUG','TWO','URN','USE','VAN','VAT','VET','VEX','VIA','VIE','VOW','WAD','WAR','WAS','WAT','WAX','WAY','WEB','WED','WET','WHO','WHY','WIG','WIN','WIT','WOE','WOK','WON','WOO','WOW','YAK','YAM','YAP','YAW','YEN','YES','YET','YEW','YOU','ZAG','ZAP','ZEN','ZIP','ZIT','ZOO'];
     for (const w of wordList) if (w.length >= 3) this.dict.add(w.toUpperCase());
   }
@@ -92,6 +92,10 @@ export class BoggleGame implements Game {
         cell.addEventListener('click', () => {
           if (this.timeLeft > 0) { this._buffer += this.board[r][c]; this.render(); }
         });
+        cell.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          if (this.timeLeft > 0) { this._buffer += this.board[r][c]; this.render(); }
+        }, { passive: false });
         row.appendChild(cell);
       }
       this.boardEl.appendChild(row);
@@ -107,10 +111,12 @@ export class BoggleGame implements Game {
     submitBtn.textContent = '✓ Submit';
     submitBtn.style.cssText = 'padding:8px 20px;font-size:16px;font-weight:700;border-radius:8px;border:2px solid #4ade80;color:#4ade80;background:var(--glass);cursor:pointer;user-select:none;';
     submitBtn.addEventListener('click', () => { if (this._buffer.length >= 3) { this.submitWord(this._buffer); this._buffer = ''; this.render(); } });
+    submitBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (this._buffer.length >= 3) { this.submitWord(this._buffer); this._buffer = ''; this.render(); } }, { passive: false });
     const clearBtn = document.createElement('div');
     clearBtn.textContent = '⌫ Clear';
     clearBtn.style.cssText = 'padding:8px 20px;font-size:16px;font-weight:700;border-radius:8px;border:2px solid #ff6b6b;color:#ff6b6b;background:var(--glass);cursor:pointer;user-select:none;';
     clearBtn.addEventListener('click', () => { this._buffer = ''; this.render(); });
+    clearBtn.addEventListener('touchstart', (e) => { e.preventDefault(); this._buffer = ''; this.render(); }, { passive: false });
     actionRow.appendChild(clearBtn);
     actionRow.appendChild(submitBtn);
     this.boardEl.appendChild(actionRow);
@@ -130,7 +136,7 @@ export class BoggleGame implements Game {
   }
 
   pause(): void { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
-  resume(): void { this.state = 'playing'; }
+  resume(): void { this.state = 'playing'; if (this.timeLeft > 0 && !this._timer) { this._timer = setInterval(() => { this.timeLeft--; if (this.timeLeft <= 0) { this.endGame(); } if (this.turnEl) this.turnEl.textContent = 'Time: ' + this.timeLeft + 's'; }, 1000); } }
   destroy(): void { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
 }
 

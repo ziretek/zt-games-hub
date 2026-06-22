@@ -63,6 +63,7 @@ export class BowlingGame implements Game {
 
   private startLoop(): void {
     const loop = () => {
+      if (document.hidden) { this._animId = requestAnimationFrame(loop); return; }
       if (this.ball.y < -10 || (Math.abs(this.ball.vx) < 0.1 && Math.abs(this.ball.vy) < 0.1 && this.ball.y > 300)) {
         this._animId = null;
         for (const pin of this.pins) {

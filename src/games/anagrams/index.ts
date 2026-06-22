@@ -14,7 +14,7 @@ export class AnagramsGame implements Game {
   private gameOver = false;
 
   constructor() {
-    this.boardEl = document.getElementById('anagrams-board')!;
+    this.boardEl = document.getElementById('anagrams-game-area')!;
     this.turnEl = document.getElementById('ana-turn');
   }
 

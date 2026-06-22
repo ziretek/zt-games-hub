@@ -1,4 +1,5 @@
 import type { Game } from '../../core/game.js';
+import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 
 export class Connect4Game implements Game {
@@ -159,7 +160,6 @@ export class Connect4Game implements Game {
   destroy(): void { this.pause(); }
 }
 
-import type { GameState } from '../../core/types.js';
 registerGame(
   { id: 'connect4', title: 'Connect 4', category: 'board', description: 'Four in a row', icon: '🔴🟡', wrapperId: 'connect4-wrapper' },
   Connect4Game,

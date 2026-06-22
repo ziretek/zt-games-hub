@@ -17,7 +17,3 @@ export interface GameConstructor {
 
 export type GameState = 'playing' | 'paused' | 'won' | 'lost' | 'idle';
 
-export interface StorageData {
-  scores: Record<string, number>;
-  stats: Record<string, unknown>;
-}

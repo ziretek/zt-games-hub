@@ -71,6 +71,7 @@ export class PenaltyKickerGame implements Game {
 
   private startLoop(): void {
     const loop = () => {
+      if (document.hidden) { this._animId = requestAnimationFrame(loop); return; }
       if (this.ball.y > 400 || this.ball.x < -20 || this.ball.x > 620) {
         this._animId = null;
         if (this.ball.y > 400) {

@@ -18,7 +18,7 @@ export class WordleGame implements Game {
 
   constructor() {
     this.boardEl = document.getElementById('wordle-board')!;
-    this.turnEl = document.getElementById('wordle-turn');
+    this.turnEl = document.getElementById('wordle-message');
   }
 
   init(): void {
@@ -63,6 +63,7 @@ export class WordleGame implements Game {
 
       const kb = document.createElement('div');
       kb.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:12px;';
+      kb.style.touchAction = 'manipulation';
       for (const row of WordleGame.KEYBOARD_ROWS) {
         const r = document.createElement('div');
         r.style.cssText = 'display:flex;gap:3px;';
@@ -73,6 +74,10 @@ export class WordleGame implements Game {
           k.addEventListener('click', () => {
             if (this._input.length < 5) { this._input += letter; input.value = this._input; }
           });
+          k.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (this._input.length < 5) { this._input += letter; input.value = this._input; }
+          }, { passive: false });
           r.appendChild(k);
         }
         kb.appendChild(r);
@@ -85,12 +90,20 @@ export class WordleGame implements Game {
       enterBtn.addEventListener('click', () => {
         if (this._input.length === 5) { this.submitGuess(this._input); this._input = ''; input.value = ''; }
       });
+      enterBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (this._input.length === 5) { this.submitGuess(this._input); this._input = ''; input.value = ''; }
+      }, { passive: false });
       const backBtn = document.createElement('div');
       backBtn.textContent = '⌫';
       backBtn.style.cssText = 'padding:8px 16px;font-size:14px;font-weight:700;border-radius:4px;background:var(--glass);color:#ff6b6b;cursor:pointer;user-select:none;';
       backBtn.addEventListener('click', () => {
         if (this._input.length > 0) { this._input = this._input.slice(0, -1); input.value = this._input; }
       });
+      backBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (this._input.length > 0) { this._input = this._input.slice(0, -1); input.value = this._input; }
+      }, { passive: false });
       actionRow.appendChild(backBtn);
       actionRow.appendChild(enterBtn);
       kb.appendChild(actionRow);

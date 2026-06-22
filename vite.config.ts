@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   root: '.',
@@ -18,4 +19,61 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     globals: true,
   },
+  plugins: [
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg', 'icon-192.svg', 'icon-512.svg'],
+      manifest: {
+        name: 'ZT Games Hub',
+        short_name: 'ZT Games',
+        description: '31 classic games with animated backgrounds and AI opponents',
+        start_url: './index.html',
+        display: 'standalone',
+        background_color: '#0a0a14',
+        theme_color: '#7c3aed',
+        scope: './',
+        icons: [
+          {
+            src: 'icon-192.svg',
+            sizes: '192x192',
+            type: 'image/svg+xml',
+            purpose: 'any',
+          },
+          {
+            src: 'icon-192.svg',
+            sizes: '192x192',
+            type: 'image/svg+xml',
+            purpose: 'maskable',
+          },
+          {
+            src: 'icon-512.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml',
+            purpose: 'any maskable',
+          },
+        ],
+        categories: ['games', 'entertainment'],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https?:\/\/.*\/assets\/.*\.(js|css)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gamehub-assets-v3',
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
+          {
+            urlPattern: /^https?:\/\/.*\/index\.html$/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'gamehub-html-v3',
+            },
+          },
+        ],
+      },
+    }),
+  ],
 });

@@ -17,7 +17,7 @@ export class WordSearchGame implements Game {
   private _selectedCells: [number, number][] = [];
 
   constructor() {
-    this.boardEl = document.getElementById('wordsearch-board')!;
+    this.boardEl = document.getElementById('wordsearch-game-area')!;
     this.turnEl = document.getElementById('ws-turn');
   }
 

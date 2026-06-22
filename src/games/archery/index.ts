@@ -70,6 +70,7 @@ export class ArcheryGame implements Game {
 
   private startLoop(): void {
     const loop = () => {
+      if (document.hidden) { this._animId = requestAnimationFrame(loop); return; }
       if (this.arrow.x > 620 || this.arrow.y > 420 || this.arrow.x < -20 || this.arrow.y < -20) {
         this._animId = null;
         const dx = this.arrow.x - this.targetX, dy = this.arrow.y - this.targetY;
