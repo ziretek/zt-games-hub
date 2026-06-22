@@ -85,6 +85,8 @@ button:active { transform: scale(0.95); }
     align-items: center;
     overflow-y: auto;
     padding: 32px 20px 60px;
+    padding-top: calc(32px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
     -webkit-overflow-scrolling: touch;
     opacity: 1;
     transition: opacity 0.25s ease, transform 0.25s ease;
@@ -542,6 +544,8 @@ button:active { transform: scale(0.95); }
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     opacity: 0;
     transition: opacity 0.25s ease, transform 0.25s ease;
 }
@@ -1108,7 +1112,7 @@ canvas {
         padding-bottom: 16px;
     }
 
-    #game-view { padding: 10px 8px; }
+    #game-view { padding: 10px 8px; padding-top: calc(10px + env(safe-area-inset-top, 0px)); padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
 
     /* Even smaller boards for tiny screens */
     .ws-word { padding: 6px 10px; }
@@ -1178,6 +1182,8 @@ canvas {
 .gw.standalone {
     display: flex;
     padding: 24px 16px;
+    padding-top: calc(24px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     min-height: calc(100vh - 60px);
 }
 
