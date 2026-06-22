@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman - Game Hub</title>
+    <meta name="description" content="Play Hangman online">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="aiBackground"></canvas>
+
+    <div class="standalone-bar">
+        <button onclick="location.href='index.html'" class="standalone-back" aria-label="Back to Hub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+            Hub
+        </button>
+        <span class="standalone-title">🧩 Hangman</span>
+        <span class="standalone-category">Puzzle</span>
+    </div>
+
+    <div id="hangman-wrapper" class="gw standalone">
+<div id="hangman-controls">
+                <button id="hang-new-btn">New Game</button>
+                <div id="hang-status"></div>
+                <div id="hang-guesses">Wrong: 0 / 6</div>
+            </div>
+            <div id="hangman-board">
+                <canvas id="hangman-canvas" width="200" height="200"></canvas>
+                <div id="hang-word-display"></div>
+                <div class="hang-keyboard"></div>
+            </div>
+</div>
+
+    <script src="script.js"></script>
+    <script>
+window.addEventListener('load', () => {
+    const entry = GAMES.find(g => g.id === 'hangman');
+    if (!entry) return;
+    const key = entry.id + 'Game';
+    window[key] = entry.create();
+    
+    document.getElementById('hangman-wrapper').classList.add('active');
+    currentBackground = new MarvelBackground('aiBackground');
+    document.title = 'Hangman - Game Hub';
+});
+    </script>
+</body>
+</html>

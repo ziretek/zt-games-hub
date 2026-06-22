@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Game Hub - Collection of classic games">
+    <meta name="theme-color" content="#7c3aed">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <title>Game Hub</title>
+</head>
+<body>
+    <canvas id="aiBackground"></canvas>
+
+    <!-- Game Hub Launcher -->
+    <div id="game-hub">
+        <div class="hub-header">
+            <div class="hub-header-top">
+                <div>
+                    <h1>Game Hub</h1>
+                    <p>Choose your game</p>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-btn active" data-theme="marvel" title="Marvel">🎭</button>
+                    <button class="theme-btn" data-theme="neural" title="Neural">🧠</button>
+                    <button class="theme-btn" data-theme="gradient" title="Gradient">🎨</button>
+                </div>
+            </div>
+            <div class="hub-toolbar">
+                <div class="hub-filter">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="board">♟️ Board</button>
+                    <button class="filter-btn" data-filter="puzzle">🧩 Puzzle</button>
+                    <button class="filter-btn" data-filter="arcade">🕹️ Arcade</button>
+                    <button class="filter-btn" data-filter="word">📝 Word</button>
+                    <button class="filter-btn" data-filter="sports">⚽ Sports</button>
+                </div>
+                <div class="hub-search">
+                    <input type="text" id="hub-search-input" placeholder="Search games..." spellcheck="false" />
+                </div>
+            </div>
+            <div class="hub-stats">
+                <span id="hub-game-count">30 games</span>
+                <span class="hub-recent" id="hub-recent">Recent: —</span>
+                <button id="hub-random-btn" title="Random game">🎲</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game View -->
+    <div id="game-view">
+        <div class="game-view-top">
+            <button class="back-btn" id="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+                Back
+            </button>
+            <span class="game-view-title" id="game-view-title">Checkers</span>
+            <div style="width:60px"></div>
+        </div>
+
+        <div id="checkers-wrapper" class="gw">
+            <div id="checker-controls">
+                <button id="newGameBtn">New Game</button>
+                <button id="vsComputerBtn">Vs Computer: Off</button>
+                <div id="turnIndicator">Turn: Red</div>
+                <div id="scoreDisplay">Red: 12 | Black: 12</div>
+            </div>
+            <div id="checker-board-container">
+                <div id="checkerGame" aria-label="Checker board" role="application"></div>
+                <div id="gameOverOverlay" style="display:none;">
+                    <div class="game-over-content">
+                        <div class="winner-text"></div>
+                        <button id="checkers-play-again" class="play-again-btn">Play Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="connect4-wrapper" class="gw">
+            <div id="connect4-controls">
+                <button id="c4-new-btn">New Game</button>
+                <button id="c4-ai-btn">Vs Computer: Off</button>
+                <div id="c4-turn">Turn: Red</div>
+            </div>
+            <div id="connect4-board"></div>
+        </div>
+
+        <div id="minesweeper-wrapper" class="gw">
+            <div id="minesweeper-controls">
+                <button id="ms-new-btn">New Game</button>
+                <button id="ms-flag-btn" class="flag-btn">🚩 Flag</button>
+                <div id="ms-mine-count">Mines: 10</div>
+                <div id="ms-timer">Time: 0</div>
+            </div>
+            <div id="minesweeper-board"></div>
+        </div>
+
+        <div id="memory-wrapper" class="gw">
+            <div id="memory-controls">
+                <button id="mem-new-btn">New Game</button>
+                <div id="mem-moves">Moves: 0</div>
+                <div id="mem-score">Pairs: 0 / 8</div>
+            </div>
+            <div id="memory-board"></div>
+        </div>
+
+        <div id="snake-wrapper" class="gw">
+            <div id="snake-controls">
+                <button id="snake-new-btn">New Game</button>
+                <div id="snake-score">Score: 0</div>
+                <div id="snake-high-score">Best: 0</div>
+            </div>
+            <canvas id="snake-canvas" width="400" height="400"></canvas>
+        </div>
+
+        <div id="tictactoe-wrapper" class="gw">
+            <div id="tictactoe-controls">
+                <button id="ttt-new-btn">New Game</button>
+                <button id="ttt-ai-btn">Vs Computer: On</button>
+                <div id="ttt-turn">Turn: X</div>
+            </div>
+            <div id="tictactoe-board"></div>
+        </div>
+
+        <div id="hangman-wrapper" class="gw">
+            <div id="hangman-controls">
+                <button id="hang-new-btn">New Game</button>
+                <div id="hang-status"></div>
+                <div id="hang-guesses">Wrong: 0 / 6</div>
+            </div>
+            <div id="hangman-board">
+                <canvas id="hangman-canvas" width="200" height="200"></canvas>
+                <div id="hang-word-display"></div>
+                <div class="hang-keyboard"></div>
+            </div>
+        </div>
+
+        <div id="game2048-wrapper" class="gw">
+            <div id="game2048-controls">
+                <button id="g2048-new-btn">New Game</button>
+                <div id="g2048-score">Score: 0</div>
+                <div id="g2048-best">Best: 0</div>
+            </div>
+            <div id="game2048-board"></div>
+        </div>
+
+        <div id="pong-wrapper" class="gw">
+            <div id="pong-controls">
+                <button id="pong-new-btn">New Game</button>
+                <div id="pong-score">0 - 0</div>
+            </div>
+            <canvas id="pong-canvas" width="600" height="400"></canvas>
+        </div>
+
+        <div id="breakout-wrapper" class="gw">
+            <div id="breakout-controls">
+                <button id="break-new-btn">New Game</button>
+                <div id="break-score">Score: 0</div>
+                <div id="break-lives">Lives: 3</div>
+            </div>
+            <canvas id="breakout-canvas" width="480" height="320"></canvas>
+        </div>
+
+        <div id="othello-wrapper" class="gw">
+            <div id="othello-controls">
+                <button id="oth-new-btn">New Game</button>
+                <div id="oth-turn">Turn: Black</div>
+                <div id="oth-score">Black: 2 | White: 2</div>
+            </div>
+            <div id="othello-board"></div>
+        </div>
+
+        <div id="battleship-wrapper" class="gw">
+            <div id="battleship-controls">
+                <button id="bs-new-btn">New Game</button>
+                <div id="bs-turn">Place ships</div>
+            </div>
+            <div id="battleship-board"></div>
+        </div>
+
+        <div id="gomoku-wrapper" class="gw">
+            <div id="gomoku-controls">
+                <button id="gom-new-btn">New Game</button>
+                <button id="gom-ai-btn">Vs Computer: On</button>
+                <div id="gom-turn">Turn: Black</div>
+            </div>
+            <div id="gomoku-board"></div>
+        </div>
+
+        <div id="simon-wrapper" class="gw">
+            <div id="simon-controls">
+                <button id="sim-new-btn">New Game</button>
+                <div id="sim-round">Round: 0</div>
+                <div id="sim-status">Watch the pattern</div>
+            </div>
+            <div id="simon-board"></div>
+        </div>
+
+        <div id="mastermind-wrapper" class="gw">
+            <div id="mastermind-controls">
+                <button id="mm-new-btn">New Game</button>
+                <div id="mm-status">Guess the code</div>
+            </div>
+            <div id="mastermind-board"></div>
+        </div>
+
+        <div id="invaders-wrapper" class="gw">
+            <div id="invaders-controls">
+                <button id="inv-new-btn">New Game</button>
+                <div id="inv-score">Score: 0</div>
+                <div id="inv-lives">Lives: 3</div>
+            </div>
+            <canvas id="invaders-canvas" width="480" height="400"></canvas>
+        </div>
+
+        <div id="flappy-wrapper" class="gw">
+            <div id="flappy-controls">
+                <button id="flap-new-btn">New Game</button>
+                <div id="flap-score">Score: 0</div>
+                <div id="flap-best">Best: 0</div>
+            </div>
+            <canvas id="flappy-canvas" width="320" height="480"></canvas>
+        </div>
+
+        <div id="dino-wrapper" class="gw">
+            <div id="dino-controls">
+                <button id="dino-new-btn">New Game</button>
+                <div id="dino-score">Score: 0</div>
+                <div id="dino-best">Best: 0</div>
+            </div>
+            <canvas id="dino-canvas" width="600" height="200"></canvas>
+        </div>
+
+        <div id="countmaster-wrapper" class="gw">
+            <div id="countmaster-controls">
+                <button id="cm-new-btn">New Game</button>
+                <div id="cm-number">Number: 0</div>
+                <div id="cm-score">Score: 0</div>
+            </div>
+            <canvas id="countmaster-canvas" width="360" height="540"></canvas>
+        </div>
+
+        <!-- ====== Word Games ====== -->
+        <div id="wordle-wrapper" class="gw">
+            <div id="wordle-controls">
+                <button id="wordle-new-btn">New Game</button>
+                <div id="wordle-message"></div>
+                <div id="wordle-stats"></div>
+            </div>
+            <div id="wordle-game-area">
+                <div id="wordle-grid"></div>
+                <div id="wordle-keyboard"></div>
+            </div>
+        </div>
+
+        <div id="boggle-wrapper" class="gw">
+            <div id="boggle-controls">
+                <button id="boggle-new-btn">New Game</button>
+                <div id="boggle-timer">Time: 3:00</div>
+                <div id="boggle-score">Score: 0</div>
+                <div id="boggle-words">Words: </div>
+            </div>
+            <canvas id="boggle-canvas" width="360" height="360"></canvas>
+            <div id="boggle-input-area">
+                <input id="boggle-word-input" type="text" placeholder="Type a word..." maxlength="16">
+                <button id="boggle-submit-btn">Submit</button>
+            </div>
+        </div>
+
+        <div id="anagrams-wrapper" class="gw">
+            <div id="anagrams-controls">
+                <button id="anagrams-new-btn">New Game</button>
+                <div id="anagrams-score">Score: 0</div>
+                <div id="anagrams-streak">Streak: 0</div>
+            </div>
+            <div id="anagrams-game-area">
+                <div id="anagrams-word">SCRAMBLE</div>
+                <div id="anagrams-hint"></div>
+                <div id="anagrams-input-row">
+                    <input id="anagrams-input" type="text" placeholder="Your answer..." maxlength="12">
+                    <button id="anagrams-submit">Submit</button>
+                    <button id="anagrams-hint-btn">Hint</button>
+                </div>
+                <div id="anagrams-result"></div>
+            </div>
+        </div>
+
+        <div id="wordsearch-wrapper" class="gw">
+            <div id="wordsearch-controls">
+                <button id="wordsearch-new-btn">New Game</button>
+                <div id="wordsearch-found">Found: 0/0</div>
+                <div id="wordsearch-score">Score: 0</div>
+            </div>
+            <div id="wordsearch-game-area">
+                <canvas id="wordsearch-canvas" width="360" height="360"></canvas>
+                <div id="wordsearch-words"></div>
+            </div>
+        </div>
+
+        <div id="typingtest-wrapper" class="gw">
+            <div id="typingtest-controls">
+                <button id="typingtest-new-btn">New Game</button>
+                <div id="typingtest-timer">Time: 30</div>
+                <div id="typingtest-wpm">WPM: 0</div>
+                <div id="typingtest-accuracy">Acc: 100%</div>
+            </div>
+            <div id="typingtest-game-area">
+                <div id="typingtest-words-display"></div>
+                <input id="typingtest-input" type="text" placeholder="Type the words here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </div>
+        </div>
+
+        <div id="spellingbee-wrapper" class="gw">
+            <div id="spellingbee-controls">
+                <button id="spellingbee-new-btn">New Game</button>
+                <div id="spellingbee-score">Score: 0</div>
+                <div id="spellingbee-found">Words: 0</div>
+            </div>
+            <div id="spellingbee-game-area">
+                <div id="spellingbee-letters"></div>
+                <div id="spellingbee-input-row">
+                    <input id="spellingbee-input" type="text" placeholder="Type a word..." maxlength="12">
+                    <button id="spellingbee-submit">Submit</button>
+                    <button id="spellingbee-shuffle-btn">Shuffle</button>
+                </div>
+                <div id="spellingbee-message"></div>
+                <div id="spellingbee-word-list"></div>
+            </div>
+        </div>
+
+        <!-- ====== Sports Games ====== -->
+        <div id="penaltykicker-wrapper" class="gw">
+            <div id="penaltykicker-controls">
+                <button id="penaltykicker-new-btn">New Game</button>
+                <div id="penaltykicker-score">Goals: 0 / 5</div>
+                <div id="penaltykicker-msg">Aim with mouse, click to shoot</div>
+            </div>
+            <canvas id="penaltykicker-canvas" width="400" height="400"></canvas>
+        </div>
+
+        <div id="basketball-wrapper" class="gw">
+            <div id="basketball-controls">
+                <button id="basketball-new-btn">New Game</button>
+                <div id="basketball-score">Score: 0</div>
+                <div id="basketball-streak">Streak: 0</div>
+                <div id="basketball-timer">Time: 30</div>
+                <div id="basketball-best">Best: 0</div>
+                <div id="basketball-acc">FG: 0/0</div>
+            </div>
+            <canvas id="basketball-canvas" width="400" height="500"></canvas>
+        </div>
+
+        <div id="sprint-wrapper" class="gw">
+            <div id="sprint-controls">
+                <button id="sprint-new-btn">New Game</button>
+                <div id="sprint-dist">Distance: 0m</div>
+                <div id="sprint-time">Time: 0.0s</div>
+                <div id="sprint-best">Best: 0.0s</div>
+            </div>
+            <canvas id="sprint-canvas" width="600" height="300"></canvas>
+        </div>
+
+        <div id="bowling-wrapper" class="gw">
+            <div id="bowling-controls">
+                <button id="bowling-new-btn">New Game</button>
+                <div id="bowling-frame">Frame: 1 / 10</div>
+                <div id="bowling-score">Score: 0</div>
+                <div id="bowling-msg">Click and drag down to bowl</div>
+            </div>
+            <canvas id="bowling-canvas" width="400" height="400"></canvas>
+        </div>
+
+        <div id="archery-wrapper" class="gw">
+            <div id="archery-controls">
+                <button id="archery-new-btn">New Game</button>
+                <div id="archery-score">Score: 0</div>
+                <div id="archery-round">Round: 1 / 10</div>
+                <div id="archery-wind">Wind: 0.0</div>
+            </div>
+            <canvas id="archery-canvas" width="500" height="400"></canvas>
+        </div>
+
+        <div id="baseball-wrapper" class="gw">
+            <div id="baseball-controls">
+                <button id="baseball-new-btn">New Game</button>
+                <div id="baseball-score">Runs: 0</div>
+                <div id="baseball-outs">Outs: 0 / 3</div>
+                <div id="baseball-inning">Inning: 1</div>
+            </div>
+            <canvas id="baseball-canvas" width="500" height="400"></canvas>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
+</body>
+</html>

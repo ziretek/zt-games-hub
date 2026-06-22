@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory - Game Hub</title>
+    <meta name="description" content="Play Memory online">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="aiBackground"></canvas>
+
+    <div class="standalone-bar">
+        <button onclick="location.href='index.html'" class="standalone-back" aria-label="Back to Hub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+            Hub
+        </button>
+        <span class="standalone-title">🧩 Memory</span>
+        <span class="standalone-category">Puzzle</span>
+    </div>
+
+    <div id="memory-wrapper" class="gw standalone">
+<div id="memory-controls">
+                <button id="mem-new-btn">New Game</button>
+                <div id="mem-moves">Moves: 0</div>
+                <div id="mem-score">Pairs: 0 / 8</div>
+            </div>
+            <div id="memory-board"></div>
+        </div>
+</div>
+
+    <script src="script.js"></script>
+    <script>
+window.addEventListener('load', () => {
+    const entry = GAMES.find(g => g.id === 'memory');
+    if (!entry) return;
+    const key = entry.id + 'Game';
+    window[key] = entry.create();
+    
+    document.getElementById('memory-wrapper').classList.add('active');
+    currentBackground = new MarvelBackground('aiBackground');
+    document.title = 'Memory - Game Hub';
+});
+    </script>
+</body>
+</html>

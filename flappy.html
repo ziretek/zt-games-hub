@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird - Game Hub</title>
+    <meta name="description" content="Play Flappy Bird online">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="aiBackground"></canvas>
+
+    <div class="standalone-bar">
+        <button onclick="location.href='index.html'" class="standalone-back" aria-label="Back to Hub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+            Hub
+        </button>
+        <span class="standalone-title">🕹️ Flappy Bird</span>
+        <span class="standalone-category">Arcade</span>
+    </div>
+
+    <div id="flappy-wrapper" class="gw standalone">
+<div id="flappy-controls">
+                <button id="flap-new-btn">New Game</button>
+                <div id="flap-score">Score: 0</div>
+                <div id="flap-best">Best: 0</div>
+            </div>
+            <canvas id="flappy-canvas" width="320" height="480"></canvas>
+</div>
+
+    <script src="script.js"></script>
+    <script>
+window.addEventListener('load', () => {
+    const entry = GAMES.find(g => g.id === 'flappy');
+    if (!entry) return;
+    const key = entry.id + 'Game';
+    window[key] = entry.create();
+    window[key].init();
+    document.getElementById('flappy-wrapper').classList.add('active');
+    currentBackground = new MarvelBackground('aiBackground');
+    document.title = 'Flappy Bird - Game Hub';
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test - Game Hub</title>
+    <meta name="description" content="Play Typing Test online">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="aiBackground"></canvas>
+
+    <div class="standalone-bar">
+        <button onclick="location.href='index.html'" class="standalone-back" aria-label="Back to Hub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+            Hub
+        </button>
+        <span class="standalone-title">📝 Typing Test</span>
+        <span class="standalone-category">Word</span>
+    </div>
+
+    <div id="typingtest-wrapper" class="gw standalone">
+<div id="typingtest-controls">
+                <button id="typingtest-new-btn">New Game</button>
+                <div id="typingtest-timer">Time: 30</div>
+                <div id="typingtest-wpm">WPM: 0</div>
+                <div id="typingtest-accuracy">Acc: 100%</div>
+            </div>
+            <div id="typingtest-game-area">
+                <div id="typingtest-words-display"></div>
+                <input id="typingtest-input" type="text" placeholder="Type the words here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </div>
+        </div>
+</div>
+
+    <script src="script.js"></script>
+    <script>
+window.addEventListener('load', () => {
+    const entry = GAMES.find(g => g.id === 'typingtest');
+    if (!entry) return;
+    const key = entry.id + 'Game';
+    window[key] = entry.create();
+    window[key].init();
+    document.getElementById('typingtest-wrapper').classList.add('active');
+    currentBackground = new MarvelBackground('aiBackground');
+    document.title = 'Typing Test - Game Hub';
+});
+    </script>
+</body>
+</html>

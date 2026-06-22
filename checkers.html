@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkers - Game Hub</title>
+    <meta name="description" content="Play Checkers online">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="aiBackground"></canvas>
+
+    <div class="standalone-bar">
+        <button onclick="location.href='index.html'" class="standalone-back" aria-label="Back to Hub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+            Hub
+        </button>
+        <span class="standalone-title">♟️ Checkers</span>
+        <span class="standalone-category">Board</span>
+    </div>
+
+    <div id="checkers-wrapper" class="gw standalone">
+<div id="checker-controls">
+                <button id="newGameBtn">New Game</button>
+                <button id="vsComputerBtn">Vs Computer: Off</button>
+                <div id="turnIndicator">Turn: Red</div>
+                <div id="scoreDisplay">Red: 12 | Black: 12</div>
+            </div>
+            <div id="checker-board-container">
+                <div id="checkerGame" aria-label="Checker board" role="application"></div>
+                <div id="gameOverOverlay" style="display:none;">
+                    <div class="game-over-content">
+                        <div class="winner-text"></div>
+                        <button onclick="window.checkersGame.newGame()" class="play-again-btn">Play Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+    <script src="script.js"></script>
+    <script>
+window.addEventListener('load', () => {
+    const entry = GAMES.find(g => g.id === 'checkers');
+    if (!entry) return;
+    const key = entry.id + 'Game';
+    window[key] = entry.create();
+    
+    document.getElementById('checkers-wrapper').classList.add('active');
+    currentBackground = new MarvelBackground('aiBackground');
+    document.title = 'Checkers - Game Hub';
+});
+    </script>
+</body>
+</html>
