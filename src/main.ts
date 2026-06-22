@@ -137,7 +137,7 @@ window.addEventListener('load', () => {
   if (backBtn) backBtn.addEventListener('click', showHub);
 
   const hubTitle = document.querySelector('.hub-header h1');
-  if (hubTitle) hubTitle.addEventListener('click', showHub);
+  if (hubTitle) hubTitle.addEventListener('click', () => location.reload());
 
   const playAgainBtn = document.getElementById('checkers-play-again');
   if (playAgainBtn) {
