@@ -2,6 +2,7 @@ import type { Game } from '../../core/game.js';
 import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { loadScore, saveScore } from '../../utils/storage.js';
+import { enableTouchOnCanvas } from '../../utils/touch.js';
 
 interface SnakeSegment {
   x: number; y: number;
@@ -47,6 +48,7 @@ export class SnakeGame implements Game {
     this.canvas.width = base * this._dpr;
     this.canvas.height = base * this._dpr;
     this.gridSize = 20 * this._dpr;
+    enableTouchOnCanvas(this.canvas);
     this.snake = [{ x: 5, y: 5 }, { x: 4, y: 5 }, { x: 3, y: 5 }];
     this.direction = { x: 1, y: 0 };
     this.nextDirection = { x: 1, y: 0 };
