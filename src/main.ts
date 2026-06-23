@@ -50,10 +50,11 @@ if (installBtn) {
 }
 
 const pwaUpdate = document.getElementById('pwa-update');
+let applyPwaUpdate: (() => Promise<void>) | null = null;
 if (pwaUpdate) {
   pwaUpdate.addEventListener('click', () => {
     pwaUpdate.style.display = 'none';
-    location.reload();
+    void (applyPwaUpdate?.() || Promise.resolve().then(() => location.reload()));
   });
   const dismissBtn = document.createElement('button');
   dismissBtn.textContent = '✕';
@@ -67,14 +68,14 @@ if (pwaUpdate) {
     e.stopPropagation();
     pwaUpdate.style.display = 'none';
     const cooldown = new Date();
-    cooldown.setHours(cooldown.getHours() + 6);
+    cooldown.setMinutes(cooldown.getMinutes() + 15);
     localStorage.setItem('pwa-update-cooldown', cooldown.toISOString());
   });
   pwaUpdate.style.position = 'relative';
   pwaUpdate.appendChild(dismissBtn);
 }
 
-registerSW({
+const updateSW = registerSW({
   onNeedRefresh() {
     if (!pwaUpdate) return;
     const cooldown = localStorage.getItem('pwa-update-cooldown');
@@ -84,7 +85,12 @@ registerSW({
   onOfflineReady() {
     console.log('App ready for offline use');
   },
+  onRegistered(registration) {
+    registration?.update();
+    if (registration) window.setInterval(() => { void registration.update(); }, 5 * 60 * 1000);
+  },
 });
+applyPwaUpdate = () => updateSW(true);
 
 // Keyboard shortcuts for snake
 document.addEventListener('keydown', (e: KeyboardEvent) => {
