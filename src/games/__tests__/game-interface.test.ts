@@ -31,18 +31,13 @@ async function loadAllGames() {
     import('../wordsearch/index.js'),
     import('../typingtest/index.js'),
     import('../spellingbee/index.js'),
-    import('../penaltykicker/index.js'),
-    import('../sprint/index.js'),
-    import('../bowling/index.js'),
-    import('../archery/index.js'),
-    import('../baseball/index.js'),
     import('../chess/index.js'),
     import('../sudoku/index.js'),
   ]);
   const ids = ['checkers', 'connect4', 'memory', 'snake', 'tictactoe', 'othello', 'battleship', 'gomoku',
     'minesweeper', 'hangman', 'game2048', 'simon', 'mastermind', 'pong', 'breakout', 'invaders',
     'flappy', 'dino', 'countmaster', 'wordle', 'boggle', 'anagrams', 'wordsearch', 'typingtest',
-    'spellingbee', 'penaltykicker', 'sprint', 'bowling', 'archery', 'baseball',
+    'spellingbee',
     'chess', 'sudoku'];
   for (let i = 0; i < ids.length; i++) {
     const mod = modules[i];
@@ -63,8 +58,6 @@ const allIds = ['game-hub', 'hub-game-count', 'hub-search-input', 'hub-random-bt
   'sim-status', 'mm-status', 'invaders-canvas', 'flappy-canvas', 'dino-canvas',
   'cm-turn', 'cm-score', 'wordle-turn', 'bog-turn', 'bog-score',
   'ana-turn', 'ws-turn', 'anagrams-game-area', 'wordsearch-game-area', 'ttest-turn', 'ttest-score', 'spell-turn',
-  'pk-turn', 'pk-score', 'bball-turn', 'bball-score', 'sprint-turn',
-  'bowl-turn', 'arch-turn', 'arch-score', 'baseb-turn',
   ...GAMES.flatMap(g => [g.id + '-wrapper', g.id + '-board', g.id + '-canvas', g.id + '-turn', g.id + '-score']),
   'chess-status', 'chess-captured', 'chess-new-btn',
   'sudoku-timer', 'sudoku-diff', 'sudoku-mistakes', 'sudoku-new-btn',
@@ -158,7 +151,7 @@ afterAll(() => {
 
 describe('game interface compliance', () => {
   it(`all ${GAMES.length} games are defined in hub data`, () => {
-    expect(GAMES.length).toBe(32);
+    expect(GAMES.length).toBe(27);
   });
 
   for (const game of GAMES) {

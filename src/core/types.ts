@@ -1,6 +1,6 @@
 export type GameID = string;
 
-export type GameCategory = 'board' | 'puzzle' | 'arcade' | 'word' | 'sports';
+export type GameCategory = 'board' | 'puzzle' | 'arcade' | 'word';
 
 export interface GameInfo {
   id: GameID;

@@ -38,7 +38,6 @@
                     <button class="filter-btn" data-filter="puzzle" role="tab" aria-selected="false">🧩 Puzzle</button>
                     <button class="filter-btn" data-filter="arcade" role="tab" aria-selected="false">🕹️ Arcade</button>
                     <button class="filter-btn" data-filter="word" role="tab" aria-selected="false">📝 Word</button>
-                    <button class="filter-btn" data-filter="sports" role="tab" aria-selected="false">⚽ Sports</button>
                 </div>
                 <div class="hub-search">
                     <div id="hub-search-input" contenteditable="true" role="searchbox" aria-label="Search games" data-placeholder="Search games..."></div>
@@ -46,7 +45,7 @@
                 </div>
             </div>
             <div class="hub-stats">
-                <span id="hub-game-count" aria-live="polite">32 games</span>
+                <span id="hub-game-count" aria-live="polite">27 games</span>
                 <span class="hub-recent" id="hub-recent" aria-live="polite">Recent: —</span>
                 <button id="hub-random-btn" title="Random game">🎲</button>
                 <button id="install-app-btn" class="install-btn" title="Install app">⬇️</button>
@@ -351,63 +350,7 @@
             <div id="sudoku-board"></div>
         </div>
 
-        <!-- ====== Sports Games ====== -->
-        <div id="penaltykicker-wrapper" class="gw">
-            <div id="penaltykicker-controls">
-                <button id="penaltykicker-new-btn">New Game</button>
-                <div id="penaltykicker-score">Goals: 0 / 5</div>
-                <div id="penaltykicker-msg">Aim with mouse, click to shoot</div>
-            </div>
-            <div id="penaltykicker-board"></div>
-            <canvas id="penaltykicker-canvas" width="400" height="400"></canvas>
-        </div>
-
-
-        <div id="sprint-wrapper" class="gw">
-            <div id="sprint-controls">
-                <button id="sprint-new-btn">New Game</button>
-                <div id="sprint-dist">Distance: 0m</div>
-                <div id="sprint-time">Time: 0.0s</div>
-                <div id="sprint-best">Best: 0.0s</div>
-            </div>
-            <div id="sprint-board"></div>
-        </div>
-
-        <div id="bowling-wrapper" class="gw">
-            <div id="bowling-controls">
-                <button id="bowling-new-btn">New Game</button>
-                <div id="bowling-frame">Frame: 1 / 10</div>
-                <div id="bowling-score">Score: 0</div>
-                <div id="bowling-msg">Click and drag down to bowl</div>
-            </div>
-            <div id="bowling-board"></div>
-            <canvas id="bowling-canvas" width="400" height="400"></canvas>
-        </div>
-
-        <div id="archery-wrapper" class="gw">
-            <div id="archery-controls">
-                <button id="archery-new-btn">New Game</button>
-                <div id="archery-score">Score: 0</div>
-                <div id="archery-round">Round: 1 / 10</div>
-                <div id="archery-wind">Wind: 0.0</div>
-            </div>
-            <div id="archery-board"></div>
-            <canvas id="archery-canvas" width="500" height="400"></canvas>
-        </div>
-
-        <div id="baseball-wrapper" class="gw">
-            <div id="baseball-controls">
-                <button id="baseball-new-btn">New Game</button>
-                <div id="baseball-score">Runs: 0</div>
-                <div id="baseball-outs">Outs: 0 / 3</div>
-                <div id="baseball-inning">Inning: 1</div>
-            </div>
-            <div id="baseball-board"></div>
-            <canvas id="baseball-canvas" width="500" height="400"></canvas>
-        </div>
-    </div>
-
-    <script type="module" src="/src/main.ts"></script>
+        <!-- ====== Word Games ====== -->
     <div id="pwa-update" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#7c3aed;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;z-index:9999;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);cursor:pointer">
         A new version is available. Click to refresh.
     </div>

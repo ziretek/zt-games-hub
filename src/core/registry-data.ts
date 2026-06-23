@@ -17,7 +17,6 @@ export const CATEGORIES: Record<GameCategory, { icon: string; name: string; acce
   puzzle: { icon: '🧩', name: 'Puzzle Games', accent: '34, 197, 94' },
   arcade: { icon: '🕹️', name: 'Arcade Games', accent: '239, 68, 68' },
   word:   { icon: '📝', name: 'Word Games', accent: '59, 130, 246' },
-  sports: { icon: '⚽', name: 'Sports Games', accent: '251, 146, 60' },
 };
 
 export const GAMES: GameEntry[] = [
@@ -48,11 +47,6 @@ export const GAMES: GameEntry[] = [
   { id: 'typingtest',    name: 'Typing Test',     category: 'word',   icon: '⌨️',  desc: 'Test your typing speed',  accent: '155, 89, 182', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
   { id: 'spellingbee',   name: 'Spelling Bee',    category: 'word',   icon: '🐝',  desc: 'Make words from letters',  accent: '232, 184, 0', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
   { id: 'sudoku',        name: 'Sudoku',          category: 'puzzle', icon: '🧩',  desc: 'Classic number puzzle',    accent: '34, 197, 94', needsNewBtn: true, needsAiBtn: false, needsRecreate: false },
-  { id: 'penaltykicker', name: 'Penalty Kicker',  category: 'sports', icon: '⚽',  desc: 'Score 5 penalties',       accent: '46, 204, 113', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
-  { id: 'sprint',        name: 'Sprint',          category: 'sports', icon: '🏃',  desc: 'Tap to sprint',           accent: '52, 152, 219', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
-  { id: 'bowling',       name: 'Bowling',         category: 'sports', icon: '🎳',  desc: 'Knock down pins',         accent: '155, 89, 182', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
-  { id: 'archery',       name: 'Archery',         category: 'sports', icon: '🏹',  desc: 'Hit the target',          accent: '39, 174, 96', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
-  { id: 'baseball',      name: 'Baseball',        category: 'sports', icon: '⚾',  desc: 'Hit home runs',           accent: '241, 196, 15', needsNewBtn: true, needsAiBtn: false, needsRecreate: true },
 ];
 
 export const GAME_MAP = new Map<string, GameEntry>();
