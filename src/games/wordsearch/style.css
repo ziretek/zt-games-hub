@@ -1,52 +1,76 @@
 /* ====== Word Search ====== */
-#wordsearch-canvas {
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-card);
-    background: #1a1a2e;
-    max-width: 100%;
+#wordsearch-game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
 }
 
-#wordsearch-game-area {
-    flex-direction: row;
-    flex-wrap: wrap;
+.ws-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2px;
+    max-width: 360px;
+    width: 100%;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.ws-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: rgba(255,255,255,0.04);
+    border-radius: 3px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background 0.1s ease;
+    color: var(--text);
+}
+
+.ws-cell:active { background: rgba(var(--primary-rgb), 0.2); }
+
+.ws-cell.ws-selected {
+    background: rgba(var(--primary-rgb), 0.3);
+    color: #fff;
+    transform: scale(1.05);
 }
 
 #wordsearch-words {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 12px;
-    max-height: 360px;
-    overflow-y: auto;
-    min-width: 100px;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    max-width: 360px;
 }
 
 .ws-word {
-    padding: 3px 8px;
-    border-radius: 3px;
+    padding: 4px 10px;
+    border-radius: 4px;
     background: rgba(255,255,255,0.05);
+    font-size: 12px;
+    font-weight: 600;
     text-decoration: none;
     transition: all 0.3s;
+    touch-action: manipulation;
 }
 
-.ws-word.found {
+.ws-word.ws-found {
     text-decoration: line-through;
     opacity: 0.4;
 }
 
-@media (max-width: 720px) {
-    .wordsearch-canvas, #wordsearch-canvas { width: 100%; height: auto; }
-    .ws-word { padding: 6px 10px; }
-}
-
+/* Responsive */
 @media (max-width: 560px) {
-    #wordsearch-canvas { width: 100%; height: auto; }
-    .ws-word { padding: 6px 10px; }
+    .ws-grid { max-width: 300px; gap: 1px; }
+    .ws-cell { font-size: 12px; }
 }
 
 @media (max-width: 380px) {
-    #wordsearch-canvas { width: 100%; height: auto; }
-    .ws-word { padding: 6px 10px; }
+    .ws-grid { max-width: 260px; gap: 1px; }
+    .ws-cell { font-size: 10px; }
 }
