@@ -50,10 +50,15 @@ function updateFavoriteButtons(): void {
 export function buildHub(): void {
   const hub = document.getElementById('game-hub');
   if (!hub) return;
+  const footer = document.getElementById('hub-footer');
+  const appendBeforeFooter = (el: HTMLElement): void => {
+    if (footer?.parentElement === hub) hub.insertBefore(el, footer);
+    else hub.appendChild(el);
+  };
 
   const bg = document.createElement('div');
   bg.className = 'hub-bg';
-  hub.appendChild(bg);
+  appendBeforeFooter(bg);
 
   for (const [key, cat] of Object.entries(CATEGORIES)) {
     const section = document.createElement('div');
@@ -112,7 +117,7 @@ export function buildHub(): void {
 
     inner.appendChild(cards);
     section.appendChild(inner);
-    hub.appendChild(section);
+    appendBeforeFooter(section);
   }
 
   const empty = document.createElement('div');
@@ -131,7 +136,7 @@ export function buildHub(): void {
     document.getElementById('hub-search-clear')?.classList.remove('visible');
     applySearch();
   });
-  hub.appendChild(empty);
+  appendBeforeFooter(empty);
   updateFavoriteButtons();
 }
 

@@ -405,6 +405,58 @@ button:active { transform: scale(0.95); }
 .install-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); transform: scale(1.12); }
 .install-btn:active { transform: scale(0.9); }
 
+/* ====== Hub Footer ====== */
+.hub-footer {
+    width: 100%;
+    max-width: 780px;
+    margin-top: 8px;
+    padding: 18px 4px 6px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--text-secondary);
+}
+
+.hub-footer-brand {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hub-footer-brand span {
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.hub-footer-brand small {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.hub-footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.hub-footer-links span {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 9px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+}
+
 /* ====== Categories ====== */
 .category {
     width: 100%;
@@ -1421,6 +1473,7 @@ canvas {
     .hub-toolbar { flex-direction: column; gap: 8px; }
     .hub-search { width: 100%; min-width: 0; }
     #game-hub { padding: 16px 14px 40px; }
+    .hub-footer { max-width: 100%; }
     .category { max-width: 100%; margin-bottom: 16px; }
     .category-inner { padding: 14px 14px 18px; border-radius: 16px; }
     .category-label { font-size: 11px; margin-bottom: 12px; }
@@ -1470,6 +1523,8 @@ canvas {
     .game-card-icon { font-size: 28px; }
     .game-card-title { font-size: 11px; }
     .hub-stats { margin-bottom: 14px; }
+    .hub-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hub-footer-links { justify-content: flex-start; }
     #hub-random-btn { width: 30px; height: 30px; font-size: 15px; }
     #hub-game-count { font-size: 10px; padding: 3px 10px; }
 
@@ -1508,6 +1563,9 @@ canvas {
     .category-label { font-size: 10px; letter-spacing: 0.08em; }
     #hub-game-count { font-size: 9px; padding: 2px 8px; }
     .hub-recent { font-size: 10px; }
+    .hub-footer { padding-top: 14px; }
+    .hub-footer-links { gap: 6px; }
+    .hub-footer-links span { font-size: 10px; padding: 4px 7px; }
 
     /* Mobile-optimized controls — stack and bottom-friendly */
     .gw { gap: 8px; }
