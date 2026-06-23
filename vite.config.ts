@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const cacheNamespace = 'gamehub-v3';
 const buildVersion = Date.now().toString(36);
 
 export default defineConfig({
@@ -29,7 +30,7 @@ export default defineConfig({
       manifest: {
         name: 'ZT Games Hub',
         short_name: 'ZT Games',
-        description: '31 classic games with animated backgrounds and AI opponents',
+        description: 'A classic game portal with animated backgrounds and AI opponents',
         start_url: './index.html',
         display: 'standalone',
         background_color: '#0a0a14',
@@ -64,7 +65,7 @@ export default defineConfig({
             urlPattern: /^https?:\/\/.*\/assets\/.*\.(js|css)$/i,
             handler: 'CacheFirst',
             options: {
-              cacheName: `gamehub-assets-${buildVersion}`,
+              cacheName: `${cacheNamespace}-assets-${buildVersion}`,
               expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
@@ -72,7 +73,7 @@ export default defineConfig({
             urlPattern: /^https?:\/\/.*\/index\.html$/i,
             handler: 'NetworkFirst',
             options: {
-              cacheName: `gamehub-html-${buildVersion}`,
+              cacheName: `${cacheNamespace}-html-${buildVersion}`,
             },
           },
         ],

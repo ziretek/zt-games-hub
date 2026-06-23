@@ -159,11 +159,11 @@ window.addEventListener('load', () => {
   const randomBtn = document.getElementById('hub-random-btn');
   if (randomBtn) {
     randomBtn.addEventListener('click', () => {
-      const filter = document.querySelector('.filter-btn.active') as HTMLElement | null;
-      const cat = filter?.dataset.filter || 'all';
-      const filtered = cat === 'all' ? GAMES : GAMES.filter(g => g.category === cat);
-      const pick = filtered[Math.floor(Math.random() * filtered.length)];
-      if (pick) showGame(pick.id);
+      const visibleCards = [...document.querySelectorAll<HTMLElement>('.game-card')]
+        .filter(card => card.style.display !== 'none' && card.closest<HTMLElement>('.category')?.style.display !== 'none');
+      const pick = visibleCards[Math.floor(Math.random() * visibleCards.length)];
+      const id = pick?.dataset.game;
+      if (id) showGame(id);
     });
   }
 

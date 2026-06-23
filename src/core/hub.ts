@@ -4,6 +4,38 @@ import { getGameConstructor } from './registry.js';
 import { gameChunks } from './lazy-load.js';
 
 let _activeFilter = 'all';
+const FAVORITES_KEY = 'favoriteGames';
+
+function getSearchQuery(): string {
+  return document.getElementById('hub-search-input')?.textContent?.toLowerCase().trim() || '';
+}
+
+function getFavoriteGames(): string[] {
+  return loadJson<string[]>(FAVORITES_KEY, []);
+}
+
+function toggleFavoriteGame(id: string): void {
+  const favorites = getFavoriteGames();
+  const next = favorites.includes(id) ? favorites.filter(g => g !== id) : [id, ...favorites];
+  saveJson(FAVORITES_KEY, next);
+  updateFavoriteButtons();
+  applySearch();
+}
+
+function updateFavoriteButtons(): void {
+  const favorites = new Set(getFavoriteGames());
+  document.querySelectorAll<HTMLElement>('.game-card').forEach(card => {
+    const id = card.dataset.game || '';
+    const isFavorite = favorites.has(id);
+    card.classList.toggle('is-favorite', isFavorite);
+    const btn = card.querySelector<HTMLButtonElement>('.favorite-btn');
+    if (btn) {
+      btn.textContent = isFavorite ? '★' : '☆';
+      btn.setAttribute('aria-label', isFavorite ? `Remove ${GAME_MAP.get(id)?.name || id} from favorites` : `Add ${GAME_MAP.get(id)?.name || id} to favorites`);
+      btn.setAttribute('aria-pressed', String(isFavorite));
+    }
+  });
+}
 
 export function buildHub(): void {
   const hub = document.getElementById('game-hub');
@@ -35,6 +67,8 @@ export function buildHub(): void {
       const card = document.createElement('div');
       card.className = 'game-card';
       card.dataset.game = g.id;
+      card.dataset.difficulty = g.difficulty.toLowerCase();
+      card.dataset.ai = String(Boolean(g.needsAiBtn));
       card.setAttribute('tabindex', '0');
       card.setAttribute('role', 'button');
       card.setAttribute('aria-label', `${g.icon} ${g.name}: ${g.desc}`);
@@ -43,12 +77,22 @@ export function buildHub(): void {
       card.innerHTML = `
         <div class="game-card-accent"></div>
         <div class="game-card-bg"></div>
+        <button class="favorite-btn" type="button" aria-pressed="false">☆</button>
         <div class="game-card-content">
           <div class="game-card-icon" aria-hidden="true">${g.icon}</div>
           <div class="game-card-title">${g.name}</div>
           <div class="game-card-desc">${g.desc}</div>
+          <div class="game-card-meta">
+            <span>${g.difficulty}</span>
+            ${g.needsAiBtn ? '<span>AI</span>' : ''}
+          </div>
         </div>
       `;
+      const favoriteBtn = card.querySelector<HTMLButtonElement>('.favorite-btn');
+      favoriteBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavoriteGame(g.id);
+      });
       card.addEventListener('click', () => showGame(g.id));
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showGame(g.id); }
@@ -60,6 +104,25 @@ export function buildHub(): void {
     section.appendChild(inner);
     hub.appendChild(section);
   }
+
+  const empty = document.createElement('div');
+  empty.id = 'hub-empty-state';
+  empty.className = 'hub-empty-state';
+  empty.innerHTML = `
+    <div class="hub-empty-title">No games found</div>
+    <button id="hub-empty-clear" type="button">Clear search</button>
+  `;
+  empty.querySelector('button')?.addEventListener('click', () => {
+    const input = document.getElementById('hub-search-input');
+    if (input) {
+      input.textContent = '';
+      input.focus();
+    }
+    document.getElementById('hub-search-clear')?.classList.remove('visible');
+    applySearch();
+  });
+  hub.appendChild(empty);
+  updateFavoriteButtons();
 }
 
 // Active game instances stored on window
@@ -91,9 +154,28 @@ function updateRecentDisplay(): void {
   const el = document.getElementById('hub-recent');
   if (!el) return;
   const recent = getRecentGames();
-  el.textContent = recent.length
-    ? 'Recent: ' + recent.map(id => GAME_MAP.get(id)?.name || id).join(', ')
-    : 'Recent: —';
+  el.replaceChildren();
+  const label = document.createElement('span');
+  label.className = 'hub-recent-label';
+  label.textContent = 'Recent';
+  el.appendChild(label);
+  if (!recent.length) {
+    const empty = document.createElement('span');
+    empty.className = 'hub-recent-empty';
+    empty.textContent = '—';
+    el.appendChild(empty);
+    return;
+  }
+  for (const id of recent) {
+    const entry = GAME_MAP.get(id);
+    if (!entry) continue;
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'hub-recent-chip';
+    chip.textContent = entry.name;
+    chip.addEventListener('click', () => showGame(id));
+    el.appendChild(chip);
+  }
 }
 
 export function showHub(): void {
@@ -123,8 +205,9 @@ export function showHub(): void {
       view.classList.remove('view-exit');
     }
     updateRecentDisplay();
-    const searchInput = document.getElementById('hub-search-input') as HTMLInputElement | null;
-    if (searchInput) { searchInput.value = ''; searchInput.focus(); }
+    const searchInput = document.getElementById('hub-search-input');
+    if (searchInput) { searchInput.textContent = ''; searchInput.focus(); }
+    document.getElementById('hub-search-clear')?.classList.remove('visible');
     document.querySelectorAll('.game-card').forEach(c => (c as HTMLElement).style.display = '');
     document.querySelectorAll('.category').forEach(c => {
       (c as HTMLElement).style.display = '';
@@ -230,7 +313,7 @@ export function setFilter(filter: string): void {
   });
   document.querySelectorAll('.category').forEach(section => {
     const sec = section as HTMLElement;
-    if (filter === 'all' || sec.dataset.category === filter) {
+    if (filter === 'all' || filter === 'favorites' || sec.dataset.category === filter) {
       sec.classList.remove('hidden');
     } else {
       sec.classList.add('hidden');
@@ -240,19 +323,28 @@ export function setFilter(filter: string): void {
 }
 
 export function applySearch(): void {
-  const input = document.getElementById('hub-search-input');
-  const q = input?.textContent?.toLowerCase().trim() || '';
+  const q = getSearchQuery();
+  const favorites = new Set(getFavoriteGames());
   document.querySelectorAll('.game-card').forEach(card => {
     const c = card as HTMLElement;
+    const id = c.dataset.game || '';
     const title = c.querySelector('.game-card-title')?.textContent?.toLowerCase() || '';
     const desc = c.querySelector('.game-card-desc')?.textContent?.toLowerCase() || '';
-    const match = !q || title.includes(q) || desc.includes(q);
+    const difficulty = c.dataset.difficulty || '';
+    const ai = c.dataset.ai === 'true' ? 'ai computer opponent' : '';
+    const favoriteMatch = _activeFilter !== 'favorites' || favorites.has(id);
+    const searchMatch = !q || title.includes(q) || desc.includes(q) || difficulty.includes(q) || ai.includes(q);
+    const match = favoriteMatch && searchMatch;
     c.style.display = match ? '' : 'none';
   });
-  document.querySelectorAll('.category:not(.hidden)').forEach(section => {
+  let visibleCount = 0;
+  document.querySelectorAll('.category').forEach(section => {
     const sec = section as HTMLElement;
-    const visible = [...sec.querySelectorAll('.game-card')].some(c => (c as HTMLElement).style.display !== 'none');
-    if (!visible && q) sec.style.display = 'none';
-    else sec.style.display = '';
+    const filterMatch = _activeFilter === 'all' || _activeFilter === 'favorites' || sec.dataset.category === _activeFilter;
+    const visible = filterMatch && [...sec.querySelectorAll('.game-card')].some(c => (c as HTMLElement).style.display !== 'none');
+    sec.style.display = visible ? '' : 'none';
+    if (visible) visibleCount++;
   });
+  const empty = document.getElementById('hub-empty-state');
+  if (empty) empty.classList.toggle('visible', visibleCount === 0);
 }
