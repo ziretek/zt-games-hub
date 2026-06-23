@@ -245,6 +245,8 @@ button:active { transform: scale(0.95); }
     outline: none;
     transition: all var(--transition);
     backdrop-filter: blur(12px);
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
 }
 
 #hub-search-input::placeholder { color: var(--text-secondary); opacity: 0.5; }
