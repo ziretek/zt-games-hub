@@ -22,6 +22,9 @@ export class PongGame implements Game {
   private _keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
   private aiSpeed = 4;
   private scoreEl: HTMLElement | null;
+  private countdownEl: HTMLDivElement;
+  private countdownTimer: number | null = null;
+  private countdownActive = false;
 
   constructor() {
     this.boardEl = document.getElementById('pong-board')!;
@@ -30,9 +33,14 @@ export class PongGame implements Game {
     this.canvas.height = 400;
     this.canvas.id = 'pong-canvas';
     enableDPR(this.canvas, 600, 400);
-    if (!this.canvas.parentElement) this.boardEl.appendChild(this.canvas);
+    if (this.canvas.parentElement !== this.boardEl) this.boardEl.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d')!;
     this.scoreEl = document.getElementById('pong-score');
+    this.countdownEl = document.createElement('div');
+    this.countdownEl.className = 'pong-countdown hidden';
+    this.countdownEl.setAttribute('aria-live', 'polite');
+    this.countdownEl.setAttribute('aria-atomic', 'true');
+    this.boardEl.appendChild(this.countdownEl);
   }
 
   private _touchHandler: ((e: MouseEvent) => void) | null = null;
@@ -58,14 +66,47 @@ export class PongGame implements Game {
       this.canvas.addEventListener('mousemove', this._touchHandler);
       enableTouchOnCanvas(this.canvas);
     }
+    this.render();
+    this.startCountdown();
     this.startLoop();
   }
 
+  private startCountdown(): void {
+    this.clearCountdown();
+    this.countdownActive = true;
+    let remaining = 3;
+    this.countdownEl.classList.remove('hidden');
+    this.countdownEl.textContent = String(remaining);
+    if (this.scoreEl) this.scoreEl.textContent = 'Get ready...';
+
+    this.countdownTimer = window.setInterval(() => {
+      remaining--;
+      if (remaining > 0) {
+        this.countdownEl.textContent = String(remaining);
+        return;
+      }
+
+      this.clearCountdown();
+      this.updateScoreLabel();
+    }, 1000);
+  }
+
+  private clearCountdown(): void {
+    if (this.countdownTimer !== null) {
+      window.clearInterval(this.countdownTimer);
+      this.countdownTimer = null;
+    }
+    this.countdownActive = false;
+    this.countdownEl.classList.add('hidden');
+    this.countdownEl.textContent = '';
+  }
+
   private startLoop(): void {
+    if (this._animId !== null) return;
     const loop = () => {
       if (document.hidden) { this._animId = requestAnimationFrame(loop); return; }
       if (this.state !== 'playing') { this._animId = null; return; }
-      this.update();
+      if (!this.countdownActive) this.update();
       this.render();
       this._animId = requestAnimationFrame(loop);
     };
@@ -121,9 +162,11 @@ export class PongGame implements Game {
   resume(): void { this.state = 'playing'; if (this._animId === null) this.startLoop(); }
   destroy(): void {
     this.pause();
+    this.clearCountdown();
     if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler);
     if (this._keyUpHandler) document.removeEventListener('keyup', this._keyUpHandler);
     if (this._touchHandler) this.canvas.removeEventListener('mousemove', this._touchHandler);
+    this.countdownEl.remove();
   }
 }
 

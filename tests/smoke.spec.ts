@@ -87,6 +87,9 @@ test('pong is always human left paddle versus AI right paddle', async ({ page })
   await expect(page.locator('#pong-wrapper')).not.toHaveClass(/active/);
   await expect(page.locator('#game-start-panel')).toBeHidden({ timeout: 10_000 });
   await expect(page.locator('#pong-ai-btn')).toHaveCount(0);
+  await expect(page.locator('.pong-countdown')).toHaveText('3');
+  await expect(page.locator('#pong-score')).toHaveText('Get ready...');
+  await expect(page.locator('.pong-countdown')).toBeHidden({ timeout: 4_000 });
   await expect(page.locator('#pong-score')).toHaveText('Human 0 - 0 AI');
 
   await page.locator('#game-help-btn').click();

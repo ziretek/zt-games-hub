@@ -1,4 +1,11 @@
 /* ====== Pong ====== */
+#pong-board {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    line-height: 0;
+}
+
 #pong-canvas {
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-card);
@@ -6,14 +13,34 @@
     max-width: 100%;
 }
 
+.pong-countdown {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-sm);
+    background: rgba(10, 14, 39, 0.42);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: clamp(72px, 18vw, 132px);
+    font-weight: 800;
+    line-height: 1;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+}
+
+.pong-countdown.hidden {
+    display: none;
+}
+
 @media (max-width: 720px) {
-    .pong-canvas, #pong-canvas { width: 100%; height: auto; }
+    #pong-board, .pong-canvas, #pong-canvas { width: 100%; height: auto; }
 }
 
 @media (max-width: 560px) {
-    #pong-canvas { width: 100%; height: auto; }
+    #pong-board, #pong-canvas { width: 100%; height: auto; }
 }
 
 @media (max-width: 380px) {
-    #pong-canvas { width: 100%; height: auto; }
+    #pong-board, #pong-canvas { width: 100%; height: auto; }
 }
