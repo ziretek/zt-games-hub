@@ -79,6 +79,13 @@ if (installBtn) {
 
 const pwaUpdate = document.getElementById('pwa-update');
 let applyPwaUpdate: (() => Promise<void>) | null = null;
+
+function safelyUpdateServiceWorker(registration?: ServiceWorkerRegistration): void {
+  void registration?.update().catch(() => {
+    // The temporary self-destroying service worker can unregister before update() resolves.
+  });
+}
+
 if (pwaUpdate) {
   pwaUpdate.addEventListener('click', () => {
     pwaUpdate.style.display = 'none';
@@ -106,17 +113,19 @@ if (pwaUpdate) {
 if (!isDevBuild) {
   const updateSW = registerSW({
     onNeedRefresh() {
-      void updateSW(true);
+      void updateSW(true).catch(() => location.reload());
     },
     onOfflineReady() {
       console.log('App ready for offline use');
     },
     onRegistered(registration) {
-      registration?.update();
-      if (registration) window.setInterval(() => { void registration.update(); }, 5 * 60 * 1000);
+      safelyUpdateServiceWorker(registration);
+      if (registration) window.setInterval(() => safelyUpdateServiceWorker(registration), 5 * 60 * 1000);
     },
   });
-  applyPwaUpdate = () => updateSW(true);
+  applyPwaUpdate = () => updateSW(true).catch(() => {
+    location.reload();
+  });
 }
 
 // Keyboard shortcuts for snake

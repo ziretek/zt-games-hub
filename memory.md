@@ -31,6 +31,7 @@ This root memory is the quick source of truth for Agent1. The detailed sprint lo
 - Security headers are configured in `vercel.json`.
 
 ## Recent Completed Work
+- Fixed CI smoke failures caused by `registration.update()` rejecting after the temporary self-destroying service worker unregisters itself.
 - Added a responsive hub footer with brand, copyright, and category chips.
 - Temporarily enabled production self-destroying service worker mode to flush already-stuck Vercel browsers out of old PWA caches.
 - Added a dev-only `/sw.js` rescue worker so stale localhost service workers can update, clear old caches, unregister themselves, and reload tabs instead of serving previous builds.
