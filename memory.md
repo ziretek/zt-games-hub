@@ -31,6 +31,7 @@ This root memory is the quick source of truth for Agent1. The detailed sprint lo
 - Security headers are configured in `vercel.json`.
 
 ## Recent Completed Work
+- Temporarily enabled production self-destroying service worker mode to flush already-stuck Vercel browsers out of old PWA caches.
 - Added a dev-only `/sw.js` rescue worker so stale localhost service workers can update, clear old caches, unregister themselves, and reload tabs instead of serving previous builds.
 - Hardened PWA cache freshness: dev builds unregister stale localhost service workers and clear old Workbox/gamehub caches, while production builds auto-activate fresh service workers.
 - Added an in-game Pong countdown: after the shared Start Game loader, Pong now shows a 3-second countdown over the playfield before ball and AI movement begin.
