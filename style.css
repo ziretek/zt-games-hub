@@ -240,11 +240,10 @@ button:active { transform: scale(0.95); }
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.04);
     color: var(--text);
-    font-size: 16px;
+    font-size: 16px !important;
     font-weight: 500;
     outline: none;
     transition: all var(--transition);
-    backdrop-filter: blur(12px);
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
 }
