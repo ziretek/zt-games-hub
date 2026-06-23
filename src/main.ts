@@ -1,4 +1,4 @@
-import { buildHub, showHub, showGame, setFilter, applySearch } from './core/hub.js';
+import { buildHub, showHub, showGame, setFilter, applySearch, openGameHelp, closeGameHelp, startSelectedGame } from './core/hub.js';
 import { initBackground, switchTheme, pauseBackground, resumeBackground } from './core/backgrounds.js';
 import { GAMES } from './core/registry-data.js';
 import './core/lazy-load.js';
@@ -169,6 +169,26 @@ window.addEventListener('load', () => {
 
   const backBtn = document.getElementById('back-btn');
   if (backBtn) backBtn.addEventListener('click', showHub);
+
+  const helpBtn = document.getElementById('game-help-btn');
+  if (helpBtn) helpBtn.addEventListener('click', openGameHelp);
+
+  const startBtn = document.getElementById('game-start-btn');
+  if (startBtn) startBtn.addEventListener('click', () => { void startSelectedGame(); });
+
+  const helpClose = document.getElementById('game-help-close');
+  if (helpClose) helpClose.addEventListener('click', closeGameHelp);
+
+  const helpPanel = document.getElementById('game-help-panel');
+  if (helpPanel) {
+    helpPanel.addEventListener('click', (e) => {
+      if (e.target === helpPanel) closeGameHelp();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeGameHelp();
+  });
 
   const hubTitle = document.querySelector('.hub-header h1');
   if (hubTitle) hubTitle.addEventListener('click', () => location.reload());

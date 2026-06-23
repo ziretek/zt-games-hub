@@ -20,18 +20,19 @@ export class PongGame implements Game {
   private _keyState: Set<string> = new Set();
   private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
   private _keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
-  private aiEnabled = false;
   private aiSpeed = 4;
-  private _aiBtn: HTMLElement | null = null;
-  private _boundAiToggle: (() => void) | null = null;
+  private scoreEl: HTMLElement | null;
 
   constructor() {
     this.boardEl = document.getElementById('pong-board')!;
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = 600; this.canvas.height = 400;
+    this.canvas = document.getElementById('pong-canvas') as HTMLCanvasElement | null || document.createElement('canvas');
+    this.canvas.width = 600;
+    this.canvas.height = 400;
+    this.canvas.id = 'pong-canvas';
     enableDPR(this.canvas, 600, 400);
-    this.boardEl.appendChild(this.canvas);
+    if (!this.canvas.parentElement) this.boardEl.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d')!;
+    this.scoreEl = document.getElementById('pong-score');
   }
 
   private _touchHandler: ((e: MouseEvent) => void) | null = null;
@@ -40,6 +41,7 @@ export class PongGame implements Game {
     this.ball.x = 300; this.ball.y = 200; this.ball.dx = 4 * (Math.random() < 0.5 ? 1 : -1); this.ball.dy = 3 * (Math.random() < 0.5 ? 1 : -1);
     this.paddle1.y = 160; this.paddle2.y = 160; this.score1 = 0; this.score2 = 0;
     this.state = 'playing';
+    this.updateScoreLabel();
     this._keyState.clear();
     if (!this._keyHandler) {
       this._keyHandler = (e: KeyboardEvent) => { this._keyState.add(e.key); if (['ArrowUp','ArrowDown','w','s'].includes(e.key)) e.preventDefault(); };
@@ -56,11 +58,6 @@ export class PongGame implements Game {
       this.canvas.addEventListener('mousemove', this._touchHandler);
       enableTouchOnCanvas(this.canvas);
     }
-    if (!this._boundAiToggle) {
-      this._boundAiToggle = () => { this.aiEnabled = !this.aiEnabled; if (this._aiBtn) this._aiBtn.textContent = 'AI: ' + (this.aiEnabled ? 'On' : 'Off'); };
-      this._aiBtn = document.getElementById('pong-ai-btn');
-      if (this._aiBtn) this._aiBtn.addEventListener('click', this._boundAiToggle);
-    }
     this.startLoop();
   }
 
@@ -76,25 +73,34 @@ export class PongGame implements Game {
   }
 
   private update(): void {
-    if (this._keyState.has('w') && this.paddle1.y > 0) this.paddle1.y -= 6;
-    if (this._keyState.has('s') && this.paddle1.y < 400 - this.paddle1.h) this.paddle1.y += 6;
-    if (!this.aiEnabled) {
-      if (this._keyState.has('ArrowUp') && this.paddle2.y > 0) this.paddle2.y -= 6;
-      if (this._keyState.has('ArrowDown') && this.paddle2.y < 400 - this.paddle2.h) this.paddle2.y += 6;
-    } else {
-      const target = this.ball.y - this.paddle2.h / 2;
-      const diff = target - this.paddle2.y;
-      if (Math.abs(diff) > this.aiSpeed) this.paddle2.y += Math.sign(diff) * this.aiSpeed;
-      else this.paddle2.y += diff;
-      this.paddle2.y = Math.max(0, Math.min(400 - this.paddle2.h, this.paddle2.y));
-    }
+    if ((this._keyState.has('w') || this._keyState.has('ArrowUp')) && this.paddle1.y > 0) this.paddle1.y -= 6;
+    if ((this._keyState.has('s') || this._keyState.has('ArrowDown')) && this.paddle1.y < 400 - this.paddle1.h) this.paddle1.y += 6;
+
+    const target = this.ball.y - this.paddle2.h / 2;
+    const diff = target - this.paddle2.y;
+    if (Math.abs(diff) > this.aiSpeed) this.paddle2.y += Math.sign(diff) * this.aiSpeed;
+    else this.paddle2.y += diff;
+    this.paddle2.y = Math.max(0, Math.min(400 - this.paddle2.h, this.paddle2.y));
+
     this.ball.x += this.ball.dx;
     this.ball.y += this.ball.dy;
     if (this.ball.y - this.ball.r <= 0 || this.ball.y + this.ball.r >= 400) this.ball.dy = -this.ball.dy;
     if (this.ball.x - this.ball.r <= 10 + this.paddle1.w && this.ball.y >= this.paddle1.y && this.ball.y <= this.paddle1.y + this.paddle1.h) { this.ball.dx = Math.abs(this.ball.dx); this.ball.dx *= 1.05; this.ball.dy *= 1.05; }
     if (this.ball.x + this.ball.r >= 590 - this.paddle2.w && this.ball.y >= this.paddle2.y && this.ball.y <= this.paddle2.y + this.paddle2.h) { this.ball.dx = -Math.abs(this.ball.dx); this.ball.dx *= 1.05; this.ball.dy *= 1.05; }
-    if (this.ball.x < 0) { this.score2++; this.ball.x = 300; this.ball.y = 200; this.ball.dx = 4 * (Math.random() < 0.5 ? 1 : -1); this.ball.dy = 3 * (Math.random() < 0.5 ? 1 : -1); }
-    if (this.ball.x > 600) { this.score1++; this.ball.x = 300; this.ball.y = 200; this.ball.dx = 4 * (Math.random() < 0.5 ? 1 : -1); this.ball.dy = 3 * (Math.random() < 0.5 ? 1 : -1); }
+    if (this.ball.x < 0) { this.score2++; this.resetBall(); }
+    if (this.ball.x > 600) { this.score1++; this.resetBall(); }
+  }
+
+  private resetBall(): void {
+    this.ball.x = 300;
+    this.ball.y = 200;
+    this.ball.dx = 4 * (Math.random() < 0.5 ? 1 : -1);
+    this.ball.dy = 3 * (Math.random() < 0.5 ? 1 : -1);
+    this.updateScoreLabel();
+  }
+
+  private updateScoreLabel(): void {
+    if (this.scoreEl) this.scoreEl.textContent = `Human ${this.score1} - ${this.score2} AI`;
   }
 
   render(): void {
@@ -108,11 +114,17 @@ export class PongGame implements Game {
     ctx.beginPath(); ctx.arc(this.ball.x, this.ball.y, this.ball.r, 0, Math.PI * 2); ctx.fill();
     ctx.font = '24px monospace'; ctx.fillStyle = '#666';
     ctx.textAlign = 'center'; ctx.fillText(this.score1 + '  ' + this.score2, 300, 30);
+    ctx.font = '12px monospace'; ctx.fillText('Human', 110, 30); ctx.fillText('AI', 490, 30);
   }
 
   pause(): void { if (this._animId !== null) { cancelAnimationFrame(this._animId); this._animId = null; } }
   resume(): void { this.state = 'playing'; if (this._animId === null) this.startLoop(); }
-  destroy(): void { this.pause(); if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler); if (this._keyUpHandler) document.removeEventListener('keyup', this._keyUpHandler); if (this._boundAiToggle && this._aiBtn) { this._aiBtn.removeEventListener('click', this._boundAiToggle); this._boundAiToggle = null; } }
+  destroy(): void {
+    this.pause();
+    if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler);
+    if (this._keyUpHandler) document.removeEventListener('keyup', this._keyUpHandler);
+    if (this._touchHandler) this.canvas.removeEventListener('mousemove', this._touchHandler);
+  }
 }
 
 registerGame(

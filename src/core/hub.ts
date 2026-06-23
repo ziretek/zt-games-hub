@@ -2,9 +2,19 @@ import { GAMES, GAME_MAP, CATEGORIES } from './registry-data.js';
 import { loadJson, saveJson } from '../utils/storage.js';
 import { getGameConstructor } from './registry.js';
 import { gameChunks } from './lazy-load.js';
+import { GAME_HELP } from './help-data.js';
+import { getGameStat, recordGameLaunch } from '../utils/game-stats.js';
 
 let _activeFilter = 'all';
+let _pendingGameId: string | null = null;
+let _startingGame = false;
+let _startToken = 0;
 const FAVORITES_KEY = 'favoriteGames';
+const START_DELAY_MS = 3000;
+
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => window.setTimeout(resolve, ms));
+}
 
 function getSearchQuery(): string {
   return document.getElementById('hub-search-input')?.textContent?.toLowerCase().trim() || '';
@@ -178,7 +188,111 @@ function updateRecentDisplay(): void {
   }
 }
 
+function formatLastPlayed(value?: string): string {
+  if (!value) return 'Never';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Unknown';
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function renderList(el: HTMLElement | null, items: string[]): void {
+  if (!el) return;
+  el.replaceChildren();
+  for (const item of items) {
+    const li = document.createElement('li');
+    li.textContent = item;
+    el.appendChild(li);
+  }
+}
+
+function updateGameHelp(id: string): void {
+  const entry = GAME_MAP.get(id);
+  const help = GAME_HELP[id];
+  if (!entry || !help) return;
+
+  const stat = getGameStat(id);
+  const title = document.getElementById('game-help-title');
+  const subtitle = document.getElementById('game-help-subtitle');
+  const objective = document.getElementById('game-help-objective');
+  const statPlays = document.getElementById('game-help-plays');
+  const statLast = document.getElementById('game-help-last');
+  const controls = document.getElementById('game-help-controls');
+  const tips = document.getElementById('game-help-tips');
+
+  if (title) title.textContent = entry.name;
+  if (subtitle) subtitle.textContent = `${entry.category} - ${entry.difficulty}${entry.needsAiBtn ? ' - AI mode' : ''}`;
+  if (objective) objective.textContent = help.objective;
+  if (statPlays) statPlays.textContent = String(stat.plays);
+  if (statLast) statLast.textContent = formatLastPlayed(stat.lastPlayedAt);
+  renderList(controls, help.controls);
+  renderList(tips, help.tips);
+}
+
+function updateStartPanel(id: string): void {
+  const entry = GAME_MAP.get(id);
+  if (!entry) return;
+
+  const panel = document.getElementById('game-start-panel');
+  const icon = document.getElementById('game-start-icon');
+  const title = document.getElementById('game-start-title');
+  const desc = document.getElementById('game-start-desc');
+  const meta = document.getElementById('game-start-meta');
+  const btn = document.getElementById('game-start-btn') as HTMLButtonElement | null;
+
+  if (icon) icon.textContent = entry.icon;
+  if (title) title.textContent = entry.name;
+  if (desc) desc.textContent = entry.desc;
+  if (meta) {
+    meta.replaceChildren();
+    for (const label of [entry.category, entry.difficulty, entry.needsAiBtn ? 'AI mode' : 'Solo play']) {
+      const chip = document.createElement('span');
+      chip.textContent = label;
+      meta.appendChild(chip);
+    }
+  }
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Start Game';
+  }
+  panel?.classList.remove('loading');
+  const progress = document.getElementById('game-start-progress') as HTMLElement | null;
+  if (progress) {
+    progress.style.transitionDuration = '';
+    progress.style.width = '0%';
+  }
+  panel?.classList.remove('hidden');
+}
+
+function hideStartPanel(): void {
+  const panel = document.getElementById('game-start-panel');
+  panel?.classList.add('hidden');
+  panel?.classList.remove('loading');
+}
+
+export function openGameHelp(): void {
+  const panel = document.getElementById('game-help-panel');
+  if (!panel) return;
+  panel.classList.add('visible');
+  panel.setAttribute('aria-hidden', 'false');
+  document.getElementById('game-help-close')?.focus();
+}
+
+export function closeGameHelp(): void {
+  const panel = document.getElementById('game-help-panel');
+  if (!panel) return;
+  panel.classList.remove('visible');
+  panel.setAttribute('aria-hidden', 'true');
+  document.getElementById('game-help-btn')?.focus();
+}
+
 export function showHub(): void {
+  _pendingGameId = null;
+  _startingGame = false;
+  _startToken++;
+  const helpPanel = document.getElementById('game-help-panel');
+  helpPanel?.classList.remove('visible');
+  helpPanel?.setAttribute('aria-hidden', 'true');
+  hideStartPanel();
   pauseAll();
   for (const g of GAMES) {
     const key = g.id + 'Game';
@@ -228,10 +342,85 @@ function bindNewGameButton(id: string): void {
   });
 }
 
+export async function startSelectedGame(): Promise<void> {
+  if (!_pendingGameId || _startingGame) return;
+  await startGame(_pendingGameId);
+}
+
+async function startGame(id: string): Promise<void> {
+  const entry = GAME_MAP.get(id);
+  if (!entry) return;
+
+  _startingGame = true;
+  const token = ++_startToken;
+  const panel = document.getElementById('game-start-panel');
+  const startBtn = document.getElementById('game-start-btn') as HTMLButtonElement | null;
+  const desc = document.getElementById('game-start-desc');
+  const progress = document.getElementById('game-start-progress') as HTMLElement | null;
+  panel?.classList.add('loading');
+  if (desc) desc.textContent = 'Loading game...';
+  if (startBtn) {
+    startBtn.disabled = true;
+    startBtn.textContent = 'Loading...';
+  }
+  if (progress) {
+    progress.style.transitionDuration = '0ms';
+    progress.style.width = '0%';
+    void progress.offsetWidth;
+    progress.style.transitionDuration = `${START_DELAY_MS}ms`;
+    progress.style.width = '100%';
+  }
+
+  try {
+    await delay(START_DELAY_MS);
+    if (token !== _startToken || _pendingGameId !== id) return;
+
+    document.querySelectorAll('.gw').forEach(el => el.classList.remove('active'));
+    const target = document.getElementById(id + '-wrapper');
+    if (target) {
+      target.classList.remove('active');
+      void target.offsetHeight;
+      target.classList.add('active');
+    }
+
+    const key = id + 'Game';
+    const loader = gameChunks[id];
+    if (!window[key] && loader) await loader();
+    if (token !== _startToken || _pendingGameId !== id) return;
+
+    const Ctor = getGameConstructor(id);
+    if (Ctor && !window[key]) {
+      window[key] = new Ctor();
+    }
+
+    const inst = window[key] as { init?: () => void } | undefined;
+    inst?.init?.();
+    bindNewGameButton(id);
+    recordGameLaunch(id);
+    updateGameHelp(id);
+    hideStartPanel();
+    _pendingGameId = null;
+  } catch (e: unknown) {
+    console.error(`Failed to load game ${id}:`, e);
+    const titleEl = document.getElementById('game-view-title');
+    if (titleEl) titleEl.textContent = 'Failed to load game';
+    if (desc) desc.textContent = `Could not load "${entry.name}". Please try again.`;
+    if (startBtn) {
+      startBtn.disabled = false;
+      startBtn.textContent = 'Try Again';
+    }
+    panel?.classList.remove('loading');
+  } finally {
+    if (token === _startToken) _startingGame = false;
+  }
+}
+
 export function showGame(id: string): void {
   const entry = GAME_MAP.get(id);
   if (!entry) return;
 
+  _startToken++;
+  _startingGame = false;
   pauseAll();
   for (const g of GAMES) {
     const key = g.id + 'Game';
@@ -250,56 +439,14 @@ export function showGame(id: string): void {
       view.classList.add('view-enter');
     }
     document.querySelectorAll('.gw').forEach(el => el.classList.remove('active'));
-    const target = document.getElementById(id + '-wrapper');
-    if (target) {
-      target.classList.remove('active');
-      void target.offsetHeight;
-      target.classList.add('active');
-    }
     const title = document.getElementById('game-view-title');
     if (title) title.textContent = entry.name;
 
-    const backBtn = document.getElementById('back-btn');
-    if (backBtn) setTimeout(() => backBtn.focus(), 50);
-
+    _pendingGameId = id;
     addRecentGame(id);
-
-    const key = id + 'Game';
-    const loader = gameChunks[id];
-    if (!window[key] && loader) {
-      loader().then(() => {
-        const Ctor = getGameConstructor(id);
-        if (Ctor) {
-          const inst = new Ctor() as { init?: () => void };
-          window[key] = inst;
-          inst.init?.();
-          bindNewGameButton(id);
-        }
-      }).catch((e: unknown) => {
-        console.error(`Failed to load game ${id}:`, e);
-        const titleEl = document.getElementById('game-view-title');
-        if (titleEl) titleEl.textContent = 'Failed to load game';
-        const gameContainer = document.getElementById('game-view');
-        if (gameContainer) {
-          const errDiv = document.createElement('div');
-          errDiv.style.cssText = 'text-align:center;padding:40px;color:#ef4444';
-          errDiv.textContent = `Could not load "${id}". Please try again.`;
-          gameContainer.appendChild(errDiv);
-        }
-      });
-    } else if (!window[key]) {
-      const Ctor = getGameConstructor(id);
-      if (Ctor) {
-        const inst = new Ctor() as { init?: () => void };
-        window[key] = inst;
-        inst.init?.();
-        bindNewGameButton(id);
-      }
-    } else {
-      const inst = window[key] as { init?: () => void } | undefined;
-      if (inst?.init) inst.init();
-      bindNewGameButton(id);
-    }
+    updateGameHelp(id);
+    updateStartPanel(id);
+    setTimeout(() => document.getElementById('game-start-btn')?.focus(), 50);
   }, 250);
 }
 

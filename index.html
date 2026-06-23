@@ -64,8 +64,51 @@
                 Back
             </button>
             <span class="game-view-title" id="game-view-title">Checkers</span>
-            <div style="width:60px"></div>
+            <button class="game-help-btn" id="game-help-btn" type="button" aria-haspopup="dialog" aria-controls="game-help-panel">Help</button>
         </div>
+        <aside id="game-help-panel" class="game-help-panel" role="dialog" aria-modal="false" aria-hidden="true" aria-labelledby="game-help-title">
+            <div class="game-help-head">
+                <div>
+                    <h2 id="game-help-title">Game Help</h2>
+                    <p id="game-help-subtitle"></p>
+                </div>
+                <button id="game-help-close" class="game-help-close" type="button" aria-label="Close help">✕</button>
+            </div>
+            <div class="game-help-statgrid" aria-label="Game stats">
+                <div>
+                    <span id="game-help-plays">0</span>
+                    <small>Plays</small>
+                </div>
+                <div>
+                    <span id="game-help-last">Never</span>
+                    <small>Last played</small>
+                </div>
+            </div>
+            <section class="game-help-section">
+                <h3>Goal</h3>
+                <p id="game-help-objective"></p>
+            </section>
+            <section class="game-help-section">
+                <h3>Controls</h3>
+                <ul id="game-help-controls"></ul>
+            </section>
+            <section class="game-help-section">
+                <h3>Tips</h3>
+                <ul id="game-help-tips"></ul>
+            </section>
+        </aside>
+        <section id="game-start-panel" class="game-start-panel" aria-labelledby="game-start-title">
+            <div class="game-start-icon" id="game-start-icon" aria-hidden="true">🎮</div>
+            <div>
+                <h2 id="game-start-title">Ready?</h2>
+                <p id="game-start-desc">Press start when you are ready to play.</p>
+                <div class="game-start-meta" id="game-start-meta"></div>
+            </div>
+            <div class="game-start-loader" aria-hidden="true">
+                <div id="game-start-progress"></div>
+            </div>
+            <button id="game-start-btn" class="game-start-btn" type="button">Start Game</button>
+        </section>
 
         <div id="checkers-wrapper" class="gw">
             <div id="checker-controls">
@@ -176,8 +219,7 @@
         <div id="pong-wrapper" class="gw">
             <div id="pong-controls">
                 <button id="pong-new-btn">New Game</button>
-                <button id="pong-ai-btn">AI: Off</button>
-                <div id="pong-score">0 - 0</div>
+                <div id="pong-score">Human 0 - 0 AI</div>
             </div>
             <div id="pong-board"></div>
             <canvas id="pong-canvas" width="600" height="400"></canvas>

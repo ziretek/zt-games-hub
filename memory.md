@@ -31,6 +31,8 @@ This root memory is the quick source of truth for Agent1. The detailed sprint lo
 - Security headers are configured in `vercel.json`.
 
 ## Recent Completed Work
+- Added a shared Start Game gate so every selected game waits for explicit start, then shows a 3-second loading state before initialization.
+- Added shared Help panels for all 27 games with goal, controls, tips, and local play stats.
 - Mobile mode QA and mobile fixes are complete.
 - AI bugs were fixed for Checkers, Chess, Battleship, Gomoku, Connect4, TicTacToe, and Pong.
 - AI timer stacking was fixed across Checkers, Chess, Connect4, Othello, Gomoku, TicTacToe, and Battleship.
