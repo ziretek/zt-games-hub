@@ -11,7 +11,9 @@ test.beforeEach(async ({ page }) => {
     if (message.type() === 'error') pageErrors.push(message.text());
   });
 
-  await page.addInitScript(() => localStorage.clear());
+  await page.addInitScript(() => {
+    localStorage.clear();
+  });
   await page.goto('/');
   await page.addStyleTag({
     content: `
@@ -99,6 +101,7 @@ test('pong is always human left paddle versus AI right paddle', async ({ page })
 
 test('every registered game opens and returns to the hub', async ({ page }) => {
   test.setTimeout(300_000);
+  await page.evaluate(() => { window.__ZT_E2E_FAST_START = true; });
 
   for (const game of GAMES) {
     await test.step(game.id, async () => {

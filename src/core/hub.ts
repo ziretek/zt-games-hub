@@ -11,9 +11,14 @@ let _startingGame = false;
 let _startToken = 0;
 const FAVORITES_KEY = 'favoriteGames';
 const START_DELAY_MS = 3000;
+const TEST_START_DELAY_MS = 150;
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => window.setTimeout(resolve, ms));
+}
+
+function getStartDelayMs(): number {
+  return window.__ZT_E2E_FAST_START ? TEST_START_DELAY_MS : START_DELAY_MS;
 }
 
 function getSearchQuery(): string {
@@ -151,6 +156,7 @@ export function buildHub(): void {
 // Active game instances stored on window
 declare global {
   interface Window {
+    __ZT_E2E_FAST_START?: boolean;
     [key: string]: unknown;
   }
 }
@@ -377,15 +383,16 @@ async function startGame(id: string): Promise<void> {
     startBtn.textContent = 'Loading...';
   }
   if (progress) {
+    const startDelayMs = getStartDelayMs();
     progress.style.transitionDuration = '0ms';
     progress.style.width = '0%';
     void progress.offsetWidth;
-    progress.style.transitionDuration = `${START_DELAY_MS}ms`;
+    progress.style.transitionDuration = `${startDelayMs}ms`;
     progress.style.width = '100%';
   }
 
   try {
-    await delay(START_DELAY_MS);
+    await delay(getStartDelayMs());
     if (token !== _startToken || _pendingGameId !== id) return;
 
     document.querySelectorAll('.gw').forEach(el => el.classList.remove('active'));
