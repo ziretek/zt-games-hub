@@ -50,4 +50,4 @@ Unit tests verify registry/storage behavior and game interface compliance. Playw
 
 ## Deployment
 
-The app builds to `dist/` with Vite. PWA service worker generation is handled by `vite-plugin-pwa` during production builds. When a new build is available, the in-app update prompt activates the waiting service worker so users do not need to clear browser cache manually.
+The app builds to `dist/` with Vite. PWA service worker generation is handled by `vite-plugin-pwa` during production builds. New production builds auto-activate the updated service worker and reload into the fresh asset set. Local dev builds also unregister stale localhost service workers and clear old Workbox/gamehub caches so `npm run dev` does not get stuck on a previous deploy.

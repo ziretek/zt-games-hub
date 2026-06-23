@@ -31,6 +31,7 @@ This root memory is the quick source of truth for Agent1. The detailed sprint lo
 - Security headers are configured in `vercel.json`.
 
 ## Recent Completed Work
+- Hardened PWA cache freshness: dev builds unregister stale localhost service workers and clear old Workbox/gamehub caches, while production builds auto-activate fresh service workers.
 - Added an in-game Pong countdown: after the shared Start Game loader, Pong now shows a 3-second countdown over the playfield before ball and AI movement begin.
 - Fixed PWA update flow: update prompt now activates the waiting service worker, checks for updates periodically, shortens dismiss cooldown, and cleans outdated caches.
 - Added a shared Start Game gate so every selected game waits for explicit start, then shows a 3-second loading state before initialization.

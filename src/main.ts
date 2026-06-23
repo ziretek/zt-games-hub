@@ -4,6 +4,34 @@ import { GAMES } from './core/registry-data.js';
 import './core/lazy-load.js';
 import { registerSW } from 'virtual:pwa-register';
 
+const isDevBuild = import.meta.env.DEV;
+
+async function releaseDevServiceWorker(): Promise<void> {
+  if (!isDevBuild || !('serviceWorker' in navigator)) return;
+
+  const storageKey = 'zt-games-dev-sw-reset';
+  const hasController = Boolean(navigator.serviceWorker.controller);
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  if (!hasController && registrations.length === 0) return;
+
+  await Promise.all(registrations.map(registration => registration.unregister()));
+  if ('caches' in window) {
+    const cacheNames = await caches.keys();
+    await Promise.all(
+      cacheNames
+        .filter(name => name.includes('gamehub') || name.includes('workbox') || name.includes('precache'))
+        .map(name => caches.delete(name)),
+    );
+  }
+
+  if (sessionStorage.getItem(storageKey) !== 'done') {
+    sessionStorage.setItem(storageKey, 'done');
+    location.reload();
+  }
+}
+
+void releaseDevServiceWorker();
+
 // Global error handler — catches uncaught exceptions and promise rejections
 window.addEventListener('error', (e) => {
   console.error('[Global Error]', e.error || e.message);
@@ -75,22 +103,21 @@ if (pwaUpdate) {
   pwaUpdate.appendChild(dismissBtn);
 }
 
-const updateSW = registerSW({
-  onNeedRefresh() {
-    if (!pwaUpdate) return;
-    const cooldown = localStorage.getItem('pwa-update-cooldown');
-    if (cooldown && new Date(cooldown) > new Date()) return;
-    pwaUpdate.style.display = 'block';
-  },
-  onOfflineReady() {
-    console.log('App ready for offline use');
-  },
-  onRegistered(registration) {
-    registration?.update();
-    if (registration) window.setInterval(() => { void registration.update(); }, 5 * 60 * 1000);
-  },
-});
-applyPwaUpdate = () => updateSW(true);
+if (!isDevBuild) {
+  const updateSW = registerSW({
+    onNeedRefresh() {
+      void updateSW(true);
+    },
+    onOfflineReady() {
+      console.log('App ready for offline use');
+    },
+    onRegistered(registration) {
+      registration?.update();
+      if (registration) window.setInterval(() => { void registration.update(); }, 5 * 60 * 1000);
+    },
+  });
+  applyPwaUpdate = () => updateSW(true);
+}
 
 // Keyboard shortcuts for snake
 document.addEventListener('keydown', (e: KeyboardEvent) => {
