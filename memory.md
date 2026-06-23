@@ -31,7 +31,7 @@ This root memory is the quick source of truth for Agent1. The detailed sprint lo
 - Security headers are configured in `vercel.json`.
 
 ## Recent Completed Work
-- Added touch-only in-playfield mobile controls for fast arcade games while leaving slower board, puzzle, and word controls outside the play area.
+- Moved fast arcade mobile controls below the playfield so touch buttons do not cover gameplay.
 - Fixed CI smoke failures caused by `registration.update()` rejecting after the temporary self-destroying service worker unregisters itself.
 - Added a responsive hub footer with brand, copyright, and category chips.
 - Temporarily enabled production self-destroying service worker mode to flush already-stuck Vercel browsers out of old PWA caches.
@@ -46,7 +46,7 @@ This root memory is the quick source of truth for Agent1. The detailed sprint lo
 - AI timer stacking was fixed across Checkers, Chess, Connect4, Othello, Gomoku, TicTacToe, and Battleship.
 - Connect4, Othello, Gomoku, and Chess AI were improved.
 - Word Search visibility and touch CSS were fixed.
-- iOS search zoom was addressed by using a contenteditable search field.
+- iOS search zoom is addressed by keeping the native search input at 16px text size.
 
 ## Known Improvement Targets
 - Keep hardcoded game counts out of docs and metadata where possible.

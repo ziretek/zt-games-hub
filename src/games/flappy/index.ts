@@ -51,7 +51,7 @@ export class FlappyGame implements Game {
     if (this.mobileControls) return;
     this.mobileControls = createMobileControls(this.boardEl, 'tap', [
       {
-        label: 'Tap',
+        label: 'Flap',
         ariaLabel: 'Flap',
         onPress: () => this.flap(),
       },

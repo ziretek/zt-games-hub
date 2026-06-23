@@ -250,17 +250,18 @@ button:active { transform: scale(0.95); }
     -webkit-text-size-adjust: 100%;
     min-height: 36px;
     line-height: 1.4;
-    -webkit-user-modify: read-write-plaintext-only;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: text;
+    appearance: none;
 }
-#hub-search-input:empty::before {
-    content: attr(data-placeholder);
-    color: var(--text-secondary);
-    opacity: 0.5;
-    pointer-events: none;
+
+#hub-search-input::-webkit-search-decoration,
+#hub-search-input::-webkit-search-cancel-button,
+#hub-search-input::-webkit-search-results-button,
+#hub-search-input::-webkit-search-results-decoration {
+    display: none;
 }
 
 #hub-search-input::placeholder { color: var(--text-secondary); opacity: 0.5; }
@@ -1154,26 +1155,26 @@ canvas {
 
 @media (hover: none), (pointer: coarse) {
     .mobile-game-controls {
-        position: absolute;
-        inset: 0;
-        z-index: 4;
+        width: min(100%, 360px);
+        margin: 12px auto 0;
         display: grid;
-        pointer-events: none;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
     }
 
     .mobile-game-control {
-        width: 54px;
-        height: 54px;
+        width: 58px;
+        height: 50px;
         border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 999px;
-        background: rgba(10, 10, 20, 0.45);
-        color: rgba(255, 255, 255, 0.86);
+        border-radius: var(--radius-sm);
+        background: rgba(10, 10, 20, 0.72);
+        color: rgba(255, 255, 255, 0.9);
         box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
         backdrop-filter: blur(10px);
         font-size: 18px;
         font-weight: 900;
         line-height: 1;
-        pointer-events: auto;
         touch-action: none;
         user-select: none;
     }
@@ -1185,9 +1186,7 @@ canvas {
     }
 
     .mobile-game-control-hint {
-        align-self: start;
         justify-self: center;
-        margin-top: 10px;
         padding: 5px 10px;
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 999px;
@@ -1201,10 +1200,8 @@ canvas {
     }
 
     .mobile-game-controls--dpad {
-        grid-template-columns: 1fr 64px 1fr;
-        grid-template-rows: 1fr 64px 64px 64px 1fr;
-        align-items: center;
-        justify-items: center;
+        grid-template-columns: repeat(3, 58px);
+        grid-template-rows: auto repeat(3, 50px);
     }
 
     .mobile-game-controls--dpad .mobile-game-control-hint {
@@ -1213,15 +1210,13 @@ canvas {
     }
 
     .mobile-game-control--up { grid-column: 2; grid-row: 2; }
-    .mobile-game-control--left { grid-column: 1; grid-row: 3; justify-self: end; }
-    .mobile-game-control--right { grid-column: 3; grid-row: 3; justify-self: start; }
+    .mobile-game-control--left { grid-column: 1; grid-row: 3; }
+    .mobile-game-control--right { grid-column: 3; grid-row: 3; }
     .mobile-game-control--down { grid-column: 2; grid-row: 4; }
 
     .mobile-game-controls--vertical {
-        grid-template-columns: 72px 1fr;
-        grid-template-rows: 1fr 72px 72px 1fr;
-        align-items: center;
-        justify-items: center;
+        grid-template-columns: repeat(2, 72px);
+        grid-template-rows: auto 50px;
     }
 
     .mobile-game-controls--vertical .mobile-game-control-hint {
@@ -1232,18 +1227,18 @@ canvas {
     .mobile-game-controls--vertical .mobile-game-control--up {
         grid-column: 1;
         grid-row: 2;
+        width: 72px;
     }
 
     .mobile-game-controls--vertical .mobile-game-control--down {
-        grid-column: 1;
-        grid-row: 3;
+        grid-column: 2;
+        grid-row: 2;
+        width: 72px;
     }
 
     .mobile-game-controls--horizontal {
-        grid-template-columns: 1fr 72px 1fr 72px 1fr;
-        grid-template-rows: 1fr 72px 12px;
-        align-items: center;
-        justify-items: center;
+        grid-template-columns: repeat(2, 84px);
+        grid-template-rows: auto 50px;
     }
 
     .mobile-game-controls--horizontal .mobile-game-control-hint {
@@ -1252,23 +1247,20 @@ canvas {
     }
 
     .mobile-game-controls--horizontal .mobile-game-control--left {
-        grid-column: 2;
+        grid-column: 1;
         grid-row: 2;
-        justify-self: center;
+        width: 84px;
     }
 
     .mobile-game-controls--horizontal .mobile-game-control--right {
-        grid-column: 4;
+        grid-column: 2;
         grid-row: 2;
-        justify-self: center;
+        width: 84px;
     }
 
     .mobile-game-controls--shooter {
-        grid-template-columns: 72px 72px 1fr 78px;
-        grid-template-rows: 1fr 78px 12px;
-        align-items: center;
-        justify-items: center;
-        padding: 0 16px;
+        grid-template-columns: 64px 64px 86px;
+        grid-template-rows: auto 52px;
     }
 
     .mobile-game-controls--shooter .mobile-game-control-hint {
@@ -1279,42 +1271,36 @@ canvas {
     .mobile-game-controls--shooter .mobile-game-control--left {
         grid-column: 1;
         grid-row: 2;
-        justify-self: start;
+        width: 64px;
     }
 
     .mobile-game-controls--shooter .mobile-game-control--right {
         grid-column: 2;
         grid-row: 2;
-        justify-self: start;
+        width: 64px;
     }
 
     .mobile-game-control--fire {
-        grid-column: 4;
+        grid-column: 3;
         grid-row: 2;
-        width: 64px;
-        height: 64px;
+        width: 86px;
+        height: 52px;
     }
 
     .mobile-game-controls--tap {
-        place-items: stretch;
+        grid-template-columns: minmax(160px, 220px);
+        grid-template-rows: auto 52px;
     }
 
     .mobile-game-controls--tap .mobile-game-control {
         width: 100%;
-        height: 100%;
-        border: 0;
+        height: 52px;
         border-radius: var(--radius-sm);
-        background: transparent;
-        color: transparent;
-        box-shadow: none;
     }
 
     .mobile-game-controls--tap .mobile-game-control-hint {
-        position: absolute;
-        left: 50%;
-        bottom: 16px;
-        transform: translateX(-50%);
-        margin: 0;
+        grid-column: 1;
+        grid-row: 1;
     }
 }
 

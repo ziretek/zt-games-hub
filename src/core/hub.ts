@@ -17,7 +17,15 @@ function delay(ms: number): Promise<void> {
 }
 
 function getSearchQuery(): string {
-  return document.getElementById('hub-search-input')?.textContent?.toLowerCase().trim() || '';
+  const input = document.getElementById('hub-search-input');
+  if (input instanceof HTMLInputElement) return input.value.toLowerCase().trim();
+  return input?.textContent?.toLowerCase().trim() || '';
+}
+
+function setSearchQuery(value: string): void {
+  const input = document.getElementById('hub-search-input');
+  if (input instanceof HTMLInputElement) input.value = value;
+  else if (input) input.textContent = value;
 }
 
 function getFavoriteGames(): string[] {
@@ -130,7 +138,7 @@ export function buildHub(): void {
   empty.querySelector('button')?.addEventListener('click', () => {
     const input = document.getElementById('hub-search-input');
     if (input) {
-      input.textContent = '';
+      setSearchQuery('');
       input.focus();
     }
     document.getElementById('hub-search-clear')?.classList.remove('visible');
@@ -325,7 +333,7 @@ export function showHub(): void {
     }
     updateRecentDisplay();
     const searchInput = document.getElementById('hub-search-input');
-    if (searchInput) { searchInput.textContent = ''; searchInput.focus(); }
+    if (searchInput) { setSearchQuery(''); searchInput.focus(); }
     document.getElementById('hub-search-clear')?.classList.remove('visible');
     document.querySelectorAll('.game-card').forEach(c => (c as HTMLElement).style.display = '');
     document.querySelectorAll('.category').forEach(c => {

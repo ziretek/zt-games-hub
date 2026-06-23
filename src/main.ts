@@ -153,7 +153,7 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-window.addEventListener('load', () => {
+function initHubApp(): void {
   const hub = document.getElementById('game-hub');
   if (!hub) return; // standalone mode
 
@@ -182,16 +182,21 @@ window.addEventListener('load', () => {
 
   const searchInput = document.getElementById('hub-search-input');
   const searchClear = document.getElementById('hub-search-clear');
+  const getSearchText = (): string => searchInput instanceof HTMLInputElement ? searchInput.value : searchInput?.textContent || '';
+  const setSearchText = (value: string): void => {
+    if (searchInput instanceof HTMLInputElement) searchInput.value = value;
+    else if (searchInput) searchInput.textContent = value;
+  };
   if (searchInput) {
     searchInput.addEventListener('input', () => {
       applySearch();
-      if (searchClear) searchClear.classList.toggle('visible', searchInput.textContent.length > 0);
+      if (searchClear) searchClear.classList.toggle('visible', getSearchText().length > 0);
     });
   }
 
   if (searchClear && searchInput) {
     searchClear.addEventListener('click', () => {
-      searchInput.textContent = '';
+      setSearchText('');
       searchClear.classList.remove('visible');
       applySearch();
       searchInput.focus();
@@ -250,4 +255,10 @@ window.addEventListener('load', () => {
       if (game?.newGame) game.newGame();
     });
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHubApp, { once: true });
+} else {
+  initHubApp();
+}

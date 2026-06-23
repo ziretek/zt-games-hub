@@ -52,7 +52,7 @@ export class DinoGame implements Game {
     if (this.mobileControls) return;
     this.mobileControls = createMobileControls(this.boardEl, 'tap', [
       {
-        label: 'Tap',
+        label: 'Jump',
         ariaLabel: 'Jump',
         onPress: () => this.jump(),
       },
