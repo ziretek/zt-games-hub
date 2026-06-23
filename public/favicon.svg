@@ -1,4 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect fill="#7c3aed" width="32" height="32" rx="6"/>
-  <text x="50%" y="50%" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle" dominant-baseline="central">Z</text>
+  <defs>
+    <linearGradient id="bg" x1="4" y1="3" x2="28" y2="29" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#15142a"/>
+      <stop offset="0.55" stop-color="#251052"/>
+      <stop offset="1" stop-color="#071927"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="6" y1="4" x2="27" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a78bfa"/>
+      <stop offset="0.5" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#bg)"/>
+  <path d="M8 7h11l-7 9h7v3H7.5l7-9H8V7Z" fill="#fff"/>
+  <path d="M20 7h6v3h-6V7Zm1.5 4h3v12h-3V11Z" fill="#fff"/>
+  <circle cx="22" cy="23" r="2.2" fill="#22d3ee"/>
+  <circle cx="27" cy="20" r="2.2" fill="#f59e0b"/>
+  <path d="M6 24h7M9.5 20.5v7" stroke="#34d399" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="1.25" y="1.25" width="29.5" height="29.5" rx="7" fill="none" stroke="url(#edge)" stroke-width="1.5"/>
 </svg>

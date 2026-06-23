@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 96" role="img" aria-labelledby="title">
+  <title id="title">ZT Games Hub</title>
+  <defs>
+    <linearGradient id="badgeBg" x1="8" y1="6" x2="88" y2="90" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#251052"/>
+      <stop offset="1" stop-color="#071927"/>
+    </linearGradient>
+    <linearGradient id="badgeRim" x1="10" y1="8" x2="86" y2="88" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a78bfa"/>
+      <stop offset="0.48" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="word" x1="112" y1="18" x2="405" y2="78" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="0.48" stop-color="#c4b5fd"/>
+      <stop offset="1" stop-color="#67e8f9"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="88" height="88" rx="22" fill="url(#badgeBg)"/>
+  <rect x="7" y="7" width="82" height="82" rx="20" fill="none" stroke="url(#badgeRim)" stroke-width="5"/>
+  <path d="M22 24h38L35 56h25v14H21l25-32H22V24Z" fill="#fff"/>
+  <path d="M62 24h20v14H62V24Zm5 18h10v34H67V42Z" fill="#fff"/>
+  <path d="M22 78h23M33.5 66.5v23" stroke="#34d399" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="67" cy="76" r="6" fill="#22d3ee"/>
+  <circle cx="82" cy="64" r="6" fill="#f59e0b"/>
+  <text x="112" y="47" fill="url(#word)" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="900" letter-spacing="0">ZT Games</text>
+  <text x="114" y="75" fill="#94a3b8" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing="5">HUB</text>
+</svg>

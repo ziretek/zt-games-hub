@@ -120,17 +120,19 @@ button:active { transform: scale(0.95); }
     margin-bottom: 18px;
 }
 
-.hub-header h1 {
-    font-size: 40px;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--primary), #a78bfa, #60a5fa, #34d399);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.brand-lockup {
     cursor: pointer;
-    background-clip: text;
-    letter-spacing: -0.04em;
-    text-align: left;
-    line-height: 1.1;
+    display: inline-flex;
+    align-items: center;
+    width: min(100%, 244px);
+    min-height: 56px;
+}
+
+.brand-lockup img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.45));
 }
 
 .hub-header p {
@@ -1154,7 +1156,7 @@ canvas {
 /* ====== Responsive ====== */
 @media (max-width: 720px) {
     .hub-header { max-width: 100%; padding-top: 6px; }
-    .hub-header h1 { font-size: 32px; }
+    .brand-lockup { width: min(100%, 230px); }
     .hub-header p { font-size: 14px; }
     .hub-header-top { flex-direction: column; gap: 12px; align-items: stretch; }
     .theme-switcher { align-self: flex-end; }
@@ -1192,7 +1194,7 @@ canvas {
 }
 
 @media (max-width: 560px) {
-    .hub-header h1 { font-size: 26px; }
+    .brand-lockup { width: min(100%, 210px); min-height: 50px; }
     .hub-header p { font-size: 13px; }
     .category-inner { padding: 12px 10px 14px; }
     .game-cards { grid-template-columns: repeat(3, 1fr); gap: 8px; }
