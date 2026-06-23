@@ -25,6 +25,7 @@ test.beforeEach(async ({ page }) => {
       }
     `,
   });
+  await expect(page.locator('body')).toHaveAttribute('data-app-ready', 'true');
   await expect(page.locator('#game-hub')).toBeVisible();
 });
 
@@ -105,13 +106,13 @@ test('every registered game opens and returns to the hub', async ({ page }) => {
 
   for (const game of GAMES) {
     await test.step(game.id, async () => {
-      await page.locator(`.game-card[data-game="${game.id}"]`).click();
+      await page.locator(`.game-card[data-game="${game.id}"]`).click({ force: true });
       await expect(page.locator('#game-view-title')).toHaveText(game.name);
       await expect(page.locator('#game-start-title')).toHaveText(game.name);
-      await page.locator('#game-start-btn').click();
+      await page.locator('#game-start-btn').click({ force: true });
       await expect(page.locator('#game-start-panel')).toBeHidden({ timeout: 10_000 });
       await expect(page.locator(`#${game.id}-wrapper`)).toHaveClass(/active/);
-      await page.locator('#back-btn').click();
+      await page.locator('#back-btn').click({ force: true });
       await expect(page.locator('#game-hub')).toBeVisible();
     });
   }

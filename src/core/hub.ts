@@ -491,6 +491,7 @@ export function setFilter(filter: string): void {
 
 export function applySearch(): void {
   const q = getSearchQuery();
+  document.getElementById('hub-search-clear')?.classList.toggle('visible', q.length > 0);
   const favorites = new Set(getFavoriteGames());
   document.querySelectorAll('.game-card').forEach(card => {
     const c = card as HTMLElement;

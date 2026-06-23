@@ -255,6 +255,8 @@ function initHubApp(): void {
       if (game?.newGame) game.newGame();
     });
   }
+
+  document.body.dataset.appReady = 'true';
 }
 
 if (document.readyState === 'loading') {
