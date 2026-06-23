@@ -125,6 +125,7 @@ export class BattleshipGame implements Game {
     if (this.gameOver) return;
     if (this.vsComputer) {
       if (this.turnEl) this.turnEl.textContent = 'Computer thinking...';
+      if (this._aiTimer) clearTimeout(this._aiTimer);
       this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 400);
     } else {
       if (this.turnEl) this.turnEl.textContent = 'Your turn, P2';

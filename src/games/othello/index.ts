@@ -73,6 +73,7 @@ export class OthelloGame implements Game {
     else if (this.getValidMoves(player).length === 0) this.gameOver = true;
     this.render();
     if (!this.gameOver && this.currentPlayer === 'black')
+      if (this._aiTimer) clearTimeout(this._aiTimer);
       this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 300);
   }
 

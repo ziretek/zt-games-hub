@@ -28,8 +28,10 @@ export class GomokuGame implements Game {
     this.currentPlayer = 'black'; this.gameOver = false; this.winner = null;
     this._winCells = []; this.state = 'playing';
     this.render();
-    if (this.aiEnabled && this.currentPlayer === 'black')
+    if (this.aiEnabled && this.currentPlayer === 'black') {
+      if (this._aiTimer) clearTimeout(this._aiTimer);
       this._aiTimer = setTimeout(() => { this._aiTimer = null; if (!this.gameOver && this.currentPlayer === 'black' && !this.board[7][7]) this.makeMove(7, 7); }, 200);
+    }
     if (!this._boundAiToggle) {
       this._boundAiToggle = () => this.toggleAI();
       const btn = document.getElementById('gom-ai-btn');
@@ -49,8 +51,10 @@ export class GomokuGame implements Game {
     if (this.board.every(row => row.every(cell => cell !== null))) { this.gameOver = true; this.render(); return; }
     this.currentPlayer = this.currentPlayer === 'black' ? 'white' : 'black';
     this.render();
-    if (this.aiEnabled && !this.gameOver && this.currentPlayer === 'black')
+    if (this.aiEnabled && !this.gameOver && this.currentPlayer === 'black') {
+      if (this._aiTimer) clearTimeout(this._aiTimer);
       this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 300);
+    }
   }
 
   private checkWin(r: number, c: number, player: string): boolean {

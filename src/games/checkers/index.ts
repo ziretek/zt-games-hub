@@ -222,7 +222,7 @@ export class CheckersGame implements Game {
     if (this.vsComputer && this.turn === this.computerSide && !this.gameOver) this._scheduleAI();
   }
 
-  private _scheduleAI(): void { this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 300); }
+  private _scheduleAI(): void { if (this._aiTimer) clearTimeout(this._aiTimer); this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 300); }
 
   private applySeq(board: Piece[][], seq: Move[]): Piece[][] {
     const b = board.map(r => [...r]);
@@ -339,7 +339,7 @@ export class CheckersGame implements Game {
   }
 
   private aiMove(): void {
-    if (this.gameOver) return;
+    if (this.gameOver || this.turn !== this.computerSide) return;
     const side = this.computerSide;
     const all = this.getAllMoves(side);
     if (all.length === 0) return;

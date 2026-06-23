@@ -541,6 +541,7 @@ export class ChessGame implements Game {
   }
 
   private _scheduleAI(): void {
+    if (this._aiTimer) clearTimeout(this._aiTimer);
     this._aiTimer = setTimeout(() => {
       this._aiTimer = null;
       this.aiMove();

@@ -48,8 +48,10 @@ export class TicTacToeGame implements Game {
     if (this.board.every(c => c)) { this.gameOver = true; this.render(); return; }
     this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
     this.render();
-    if (this.aiEnabled && !this.gameOver && this.currentPlayer === 'O')
+    if (this.aiEnabled && !this.gameOver && this.currentPlayer === 'O') {
+      if (this._aiTimer) clearTimeout(this._aiTimer);
       this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 200);
+    }
   }
 
   aiMove(): void {

@@ -184,7 +184,7 @@ export class Connect4Game implements Game {
     return false;
   }
 
-  private _scheduleAI(): void { this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 300); }
+  private _scheduleAI(): void { if (this._aiTimer) clearTimeout(this._aiTimer); this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 300); }
 
   private renderPreview(): void {
     document.querySelectorAll('.c4-preview-red, .c4-preview-yellow').forEach(c =>
