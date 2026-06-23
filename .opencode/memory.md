@@ -74,7 +74,19 @@
 - ✅ **Gomoku overflow** — Fixed 15×15 grid exceeding 380px viewport (gap 1→0px)
 - ✅ **Sprint** — Added `touch-action: manipulation`
 
+### Sprint: Jun 23 Late — AI Improvements & Sports Removal (COMPLETED)
+- ✅ **Connect4 AI** — Upgraded from one-ply greedy to minimax α-β depth 4
+- ✅ **Othello AI** — Upgraded from one-ply heuristic to minimax α-β depth 3 (with mobility + positional evaluation)
+- ✅ **Gomoku AI** — Upgraded from heuristic + random to minimax α-β depth 2 (with candidate cell filtering for performance)
+- ✅ **Chess AI** — Search depth increased from 3 to 4
+- ✅ **AI timer stacking fix** — 7 games: added `clearTimeout` before `setTimeout` in AI schedulers to prevent double-moves (Checkers, Chess, Connect4, Othello, Gomoku, TicTacToe, Battleship)
+- ✅ **Pong AI** — Added AI opponent with toggle button
+- ✅ **Sports games removed** — Penalty Kicker, Sprint, Bowling, Archery, Baseball deleted (unplayable on mobile). Game count 32→27
+- ✅ **Word Search fixed** — Grid was invisible (no CSS for `.ws-grid`, `.ws-cell`, `.ws-selected`). Added full CSS grid layout, touch-action, responsive breakpoints, fixed missing `#ws-turn` element
+- ✅ **iOS search zoom** — Replaced `<input>` with `<div contenteditable>` to definitively prevent iOS auto-zoom on focus
+
 ## Token Usage
 - (tracking started Jun 23 with Token-Optimizer agent)
 - Sprint: AI Bug Fixes & Mobile Redesign — estimated ~45 tasks, ~8K input, ~12K output, ~$0.02 total
-- Waste flags: 0 loops exceeded 3 strikes; 3 duplicate patterns (AI button wiring) caught late — could have reused Checkers fix pattern earlier
+- Sprint: AI Improvements & Sports Removal — estimated ~25 tasks, ~5K input, ~8K output, ~$0.015 total
+- Waste flags: AI timer stacking bug was a pattern that could have been caught earlier (same root cause in 7 games)
