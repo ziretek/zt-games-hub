@@ -4,6 +4,7 @@ import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { enableTouchOnCanvas } from '../../utils/touch.js';
 import { enableDPR } from '../../utils/dpr.js';
+import { createMobileControls, type MobileControlsHandle } from '../../utils/mobile-controls.js';
 
 export class InvadersGame implements Game {
   readonly id = 'invaders';
@@ -24,6 +25,7 @@ export class InvadersGame implements Game {
   private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
   private _keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
   private shootCooldown = 0;
+  private mobileControls: MobileControlsHandle | null = null;
 
   constructor() {
     this.boardEl = document.getElementById('invaders-board')!;
@@ -61,7 +63,37 @@ export class InvadersGame implements Game {
       this.canvas.addEventListener('click', this._shootHandler);
       enableTouchOnCanvas(this.canvas);
     }
+    this.addMobileControls();
     this.startLoop();
+  }
+
+  private addMobileControls(): void {
+    if (this.mobileControls) return;
+    this.mobileControls = createMobileControls(this.boardEl, 'shooter', [
+      {
+        label: '←',
+        ariaLabel: 'Move ship left',
+        className: 'mobile-game-control--left',
+        onPress: () => this._keys.add('ArrowLeft'),
+        onRelease: () => this._keys.delete('ArrowLeft'),
+      },
+      {
+        label: '→',
+        ariaLabel: 'Move ship right',
+        className: 'mobile-game-control--right',
+        onPress: () => this._keys.add('ArrowRight'),
+        onRelease: () => this._keys.delete('ArrowRight'),
+      },
+      {
+        label: '●',
+        ariaLabel: 'Fire',
+        className: 'mobile-game-control--fire',
+        onPress: () => {
+          this._keys.add(' ');
+          window.setTimeout(() => this._keys.delete(' '), 120);
+        },
+      },
+    ], 'Move and fire');
   }
 
   private startLoop(): void {
@@ -142,7 +174,15 @@ export class InvadersGame implements Game {
 
   pause(): void { if (this._animId !== null) { cancelAnimationFrame(this._animId); this._animId = null; } }
   resume(): void { this.state = 'playing'; if (this._animId === null) this.startLoop(); }
-  destroy(): void { this.pause(); if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler); if (this._keyUpHandler) document.removeEventListener('keyup', this._keyUpHandler); }
+  destroy(): void {
+    this.pause();
+    if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler);
+    if (this._keyUpHandler) document.removeEventListener('keyup', this._keyUpHandler);
+    if (this._touchHandler) this.canvas.removeEventListener('mousemove', this._touchHandler);
+    if (this._shootHandler) this.canvas.removeEventListener('click', this._shootHandler);
+    this.mobileControls?.destroy();
+    this.mobileControls = null;
+  }
 }
 
 registerGame(

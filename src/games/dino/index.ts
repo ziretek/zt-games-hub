@@ -4,6 +4,7 @@ import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { enableTouchOnCanvas } from '../../utils/touch.js';
 import { enableDPR } from '../../utils/dpr.js';
+import { createMobileControls, type MobileControlsHandle } from '../../utils/mobile-controls.js';
 
 export class DinoGame implements Game {
   readonly id = 'dino';
@@ -21,6 +22,7 @@ export class DinoGame implements Game {
   private _animId: number | null = null;
   private _spaceHandler: ((e: KeyboardEvent) => void) | null = null;
   private _clickHandler: (() => void) | null = null;
+  private mobileControls: MobileControlsHandle | null = null;
 
   constructor() {
     this.boardEl = document.getElementById('dino-board')!;
@@ -42,7 +44,19 @@ export class DinoGame implements Game {
       this.canvas.addEventListener('click', this._clickHandler);
       enableTouchOnCanvas(this.canvas);
     }
+    this.addMobileControls();
     this.startLoop();
+  }
+
+  private addMobileControls(): void {
+    if (this.mobileControls) return;
+    this.mobileControls = createMobileControls(this.boardEl, 'tap', [
+      {
+        label: 'Tap',
+        ariaLabel: 'Jump',
+        onPress: () => this.jump(),
+      },
+    ], 'Tap to jump');
   }
 
   private jump(): void {
@@ -96,7 +110,13 @@ export class DinoGame implements Game {
 
   pause(): void { if (this._animId !== null) { cancelAnimationFrame(this._animId); this._animId = null; } }
   resume(): void { this.state = 'playing'; if (this._animId === null) this.startLoop(); }
-  destroy(): void { this.pause(); if (this._spaceHandler) document.removeEventListener('keydown', this._spaceHandler); if (this._clickHandler) this.canvas.removeEventListener('click', this._clickHandler); }
+  destroy(): void {
+    this.pause();
+    if (this._spaceHandler) document.removeEventListener('keydown', this._spaceHandler);
+    if (this._clickHandler) this.canvas.removeEventListener('click', this._clickHandler);
+    this.mobileControls?.destroy();
+    this.mobileControls = null;
+  }
 }
 
 registerGame(

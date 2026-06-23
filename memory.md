@@ -31,6 +31,7 @@ This root memory is the quick source of truth for Agent1. The detailed sprint lo
 - Security headers are configured in `vercel.json`.
 
 ## Recent Completed Work
+- Added touch-only in-playfield mobile controls for fast arcade games while leaving slower board, puzzle, and word controls outside the play area.
 - Fixed CI smoke failures caused by `registration.update()` rejecting after the temporary self-destroying service worker unregisters itself.
 - Added a responsive hub footer with brand, copyright, and category chips.
 - Temporarily enabled production self-destroying service worker mode to flush already-stuck Vercel browsers out of old PWA caches.

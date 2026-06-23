@@ -4,6 +4,7 @@ import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { loadScore, saveScore } from '../../utils/storage.js';
 import { enableTouchOnCanvas } from '../../utils/touch.js';
+import { createMobileControls, ensureCanvasControlStage, type MobileControlsHandle } from '../../utils/mobile-controls.js';
 
 interface SnakeSegment {
   x: number; y: number;
@@ -34,6 +35,7 @@ export class SnakeGame implements Game {
   private loop: ((now: number) => void) | null = null;
   private _touchStartHandler: ((e: TouchEvent) => void) | null = null;
   private _touchEndHandler: ((e: TouchEvent) => void) | null = null;
+  private mobileControls: MobileControlsHandle | null = null;
 
   constructor() {
     this.canvas = document.getElementById('snake-canvas') as HTMLCanvasElement;
@@ -75,6 +77,18 @@ export class SnakeGame implements Game {
     };
     this.animationId = requestAnimationFrame(this.loop);
     this.addTouchControls();
+    this.addMobileControls();
+  }
+
+  private addMobileControls(): void {
+    if (this.mobileControls) return;
+    const stage = ensureCanvasControlStage(this.canvas, 'snake-mobile-stage');
+    this.mobileControls = createMobileControls(stage, 'dpad', [
+      { label: '↑', ariaLabel: 'Move up', className: 'mobile-game-control--up', onPress: () => this.setDirection(0, -1) },
+      { label: '←', ariaLabel: 'Move left', className: 'mobile-game-control--left', onPress: () => this.setDirection(-1, 0) },
+      { label: '→', ariaLabel: 'Move right', className: 'mobile-game-control--right', onPress: () => this.setDirection(1, 0) },
+      { label: '↓', ariaLabel: 'Move down', className: 'mobile-game-control--down', onPress: () => this.setDirection(0, 1) },
+    ], 'Swipe or tap');
   }
 
   private addTouchControls(): void {
@@ -218,6 +232,8 @@ export class SnakeGame implements Game {
       this.canvas.removeEventListener('touchend', this._touchEndHandler);
       this._touchEndHandler = null;
     }
+    this.mobileControls?.destroy();
+    this.mobileControls = null;
   }
 
   render(): void { this.draw(); }

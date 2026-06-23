@@ -4,6 +4,7 @@ import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { enableTouchOnCanvas } from '../../utils/touch.js';
 import { enableDPR } from '../../utils/dpr.js';
+import { createMobileControls, type MobileControlsHandle } from '../../utils/mobile-controls.js';
 
 export class PongGame implements Game {
   readonly id = 'pong';
@@ -25,6 +26,7 @@ export class PongGame implements Game {
   private countdownEl: HTMLDivElement;
   private countdownTimer: number | null = null;
   private countdownActive = false;
+  private mobileControls: MobileControlsHandle | null = null;
 
   constructor() {
     this.boardEl = document.getElementById('pong-board')!;
@@ -67,8 +69,29 @@ export class PongGame implements Game {
       enableTouchOnCanvas(this.canvas);
     }
     this.render();
+    this.addMobileControls();
     this.startCountdown();
     this.startLoop();
+  }
+
+  private addMobileControls(): void {
+    if (this.mobileControls) return;
+    this.mobileControls = createMobileControls(this.boardEl, 'vertical', [
+      {
+        label: '↑',
+        ariaLabel: 'Move paddle up',
+        className: 'mobile-game-control--up',
+        onPress: () => this._keyState.add('ArrowUp'),
+        onRelease: () => this._keyState.delete('ArrowUp'),
+      },
+      {
+        label: '↓',
+        ariaLabel: 'Move paddle down',
+        className: 'mobile-game-control--down',
+        onPress: () => this._keyState.add('ArrowDown'),
+        onRelease: () => this._keyState.delete('ArrowDown'),
+      },
+    ], 'Drag or tap');
   }
 
   private startCountdown(): void {
@@ -166,6 +189,8 @@ export class PongGame implements Game {
     if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler);
     if (this._keyUpHandler) document.removeEventListener('keyup', this._keyUpHandler);
     if (this._touchHandler) this.canvas.removeEventListener('mousemove', this._touchHandler);
+    this.mobileControls?.destroy();
+    this.mobileControls = null;
     this.countdownEl.remove();
   }
 }

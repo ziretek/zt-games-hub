@@ -1059,6 +1059,17 @@ canvas {
     max-width: 100%;
     height: auto;
 }
+
+.mobile-canvas-stage {
+    display: inline-block;
+    max-width: 100%;
+    line-height: 0;
+}
+
+.mobile-canvas-stage canvas {
+    display: block;
+}
+
 .gw {
     display: none;
     flex-direction: column;
@@ -1130,6 +1141,181 @@ canvas {
 #minesweeper-controls button:active, #memory-controls button:active,
 #snake-controls button:active {
     transform: scale(0.95);
+}
+
+/* ====== Mobile Arcade Controls ====== */
+.mobile-control-stage {
+    position: relative;
+}
+
+.mobile-game-controls {
+    display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+    .mobile-game-controls {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        display: grid;
+        pointer-events: none;
+    }
+
+    .mobile-game-control {
+        width: 54px;
+        height: 54px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 999px;
+        background: rgba(10, 10, 20, 0.45);
+        color: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1;
+        pointer-events: auto;
+        touch-action: none;
+        user-select: none;
+    }
+
+    .mobile-game-control:active {
+        background: rgba(var(--primary-rgb), 0.38);
+        border-color: rgba(255, 255, 255, 0.38);
+        transform: scale(0.94);
+    }
+
+    .mobile-game-control-hint {
+        align-self: start;
+        justify-self: center;
+        margin-top: 10px;
+        padding: 5px 10px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        background: rgba(10, 10, 20, 0.42);
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1;
+        pointer-events: none;
+        backdrop-filter: blur(10px);
+    }
+
+    .mobile-game-controls--dpad {
+        grid-template-columns: 1fr 64px 1fr;
+        grid-template-rows: 1fr 64px 64px 64px 1fr;
+        align-items: center;
+        justify-items: center;
+    }
+
+    .mobile-game-controls--dpad .mobile-game-control-hint {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .mobile-game-control--up { grid-column: 2; grid-row: 2; }
+    .mobile-game-control--left { grid-column: 1; grid-row: 3; justify-self: end; }
+    .mobile-game-control--right { grid-column: 3; grid-row: 3; justify-self: start; }
+    .mobile-game-control--down { grid-column: 2; grid-row: 4; }
+
+    .mobile-game-controls--vertical {
+        grid-template-columns: 72px 1fr;
+        grid-template-rows: 1fr 72px 72px 1fr;
+        align-items: center;
+        justify-items: center;
+    }
+
+    .mobile-game-controls--vertical .mobile-game-control-hint {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .mobile-game-controls--vertical .mobile-game-control--up {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .mobile-game-controls--vertical .mobile-game-control--down {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .mobile-game-controls--horizontal {
+        grid-template-columns: 1fr 72px 1fr 72px 1fr;
+        grid-template-rows: 1fr 72px 12px;
+        align-items: center;
+        justify-items: center;
+    }
+
+    .mobile-game-controls--horizontal .mobile-game-control-hint {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .mobile-game-controls--horizontal .mobile-game-control--left {
+        grid-column: 2;
+        grid-row: 2;
+        justify-self: center;
+    }
+
+    .mobile-game-controls--horizontal .mobile-game-control--right {
+        grid-column: 4;
+        grid-row: 2;
+        justify-self: center;
+    }
+
+    .mobile-game-controls--shooter {
+        grid-template-columns: 72px 72px 1fr 78px;
+        grid-template-rows: 1fr 78px 12px;
+        align-items: center;
+        justify-items: center;
+        padding: 0 16px;
+    }
+
+    .mobile-game-controls--shooter .mobile-game-control-hint {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .mobile-game-controls--shooter .mobile-game-control--left {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: start;
+    }
+
+    .mobile-game-controls--shooter .mobile-game-control--right {
+        grid-column: 2;
+        grid-row: 2;
+        justify-self: start;
+    }
+
+    .mobile-game-control--fire {
+        grid-column: 4;
+        grid-row: 2;
+        width: 64px;
+        height: 64px;
+    }
+
+    .mobile-game-controls--tap {
+        place-items: stretch;
+    }
+
+    .mobile-game-controls--tap .mobile-game-control {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: transparent;
+        box-shadow: none;
+    }
+
+    .mobile-game-controls--tap .mobile-game-control-hint {
+        position: absolute;
+        left: 50%;
+        bottom: 16px;
+        transform: translateX(-50%);
+        margin: 0;
+    }
 }
 
 .flag-btn.active {

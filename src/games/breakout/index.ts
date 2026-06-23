@@ -4,6 +4,7 @@ import type { GameState } from '../../core/types.js';
 import { registerGame } from '../../core/registry.js';
 import { enableTouchOnCanvas } from '../../utils/touch.js';
 import { enableDPR } from '../../utils/dpr.js';
+import { createMobileControls, type MobileControlsHandle } from '../../utils/mobile-controls.js';
 
 export class BreakoutGame implements Game {
   readonly id = 'breakout';
@@ -18,8 +19,10 @@ export class BreakoutGame implements Game {
   private lives = 3;
   private _animId: number | null = null;
   private _mouseX = 0;
+  private _mobileDirection = 0;
   private _mouseHandler: ((e: MouseEvent) => void) | null = null;
   private _keyHandler: ((e: KeyboardEvent) => void) | null = null;
+  private mobileControls: MobileControlsHandle | null = null;
 
   constructor() {
     this.boardEl = document.getElementById('breakout-board')!;
@@ -33,6 +36,8 @@ export class BreakoutGame implements Game {
   init(): void {
     this.ball.x = 300; this.ball.y = 350; this.ball.dx = 4; this.ball.dy = -4;
     this.paddle.x = 250;
+    this._mouseX = 300;
+    this._mobileDirection = 0;
     this.bricks = []; this.score = 0; this.lives = 3;
     const colors = ['#ff6b6b','#f472b6','#a78bfa','#60a5fa','#4ade80','#fbbf24','#fb923c'];
     for (let r = 0; r < 7; r++) for (let c = 0; c < 8; c++)
@@ -42,6 +47,7 @@ export class BreakoutGame implements Game {
       this._mouseHandler = (e: MouseEvent) => {
         const rect = this.canvas.getBoundingClientRect();
         this._mouseX = e.clientX - rect.left;
+        this._mobileDirection = 0;
       };
       this.canvas.addEventListener('mousemove', this._mouseHandler);
     }
@@ -50,7 +56,28 @@ export class BreakoutGame implements Game {
       document.addEventListener('keydown', this._keyHandler);
     }
     enableTouchOnCanvas(this.canvas);
+    this.addMobileControls();
     this.startLoop();
+  }
+
+  private addMobileControls(): void {
+    if (this.mobileControls) return;
+    this.mobileControls = createMobileControls(this.boardEl, 'horizontal', [
+      {
+        label: '←',
+        ariaLabel: 'Move paddle left',
+        className: 'mobile-game-control--left',
+        onPress: () => { this._mobileDirection = -1; },
+        onRelease: () => { this._mobileDirection = 0; },
+      },
+      {
+        label: '→',
+        ariaLabel: 'Move paddle right',
+        className: 'mobile-game-control--right',
+        onPress: () => { this._mobileDirection = 1; },
+        onRelease: () => { this._mobileDirection = 0; },
+      },
+    ], 'Drag or hold');
   }
 
   private startLoop(): void {
@@ -65,6 +92,9 @@ export class BreakoutGame implements Game {
   }
 
   private update(): void {
+    if (this._mobileDirection !== 0) {
+      this._mouseX = Math.max(0, Math.min(600, (this._mouseX || this.paddle.x + this.paddle.w / 2) + this._mobileDirection * 14));
+    }
     const targetX = this._mouseX - this.paddle.w / 2;
     this.paddle.x += (targetX - this.paddle.x) * 0.2;
     this.paddle.x = Math.max(0, Math.min(600 - this.paddle.w, this.paddle.x));
@@ -104,7 +134,13 @@ export class BreakoutGame implements Game {
 
   pause(): void { if (this._animId !== null) { cancelAnimationFrame(this._animId); this._animId = null; } }
   resume(): void { this.state = 'playing'; if (this._animId === null) this.startLoop(); }
-  destroy(): void { this.pause(); if (this._mouseHandler) this.canvas.removeEventListener('mousemove', this._mouseHandler); if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler); }
+  destroy(): void {
+    this.pause();
+    if (this._mouseHandler) this.canvas.removeEventListener('mousemove', this._mouseHandler);
+    if (this._keyHandler) document.removeEventListener('keydown', this._keyHandler);
+    this.mobileControls?.destroy();
+    this.mobileControls = null;
+  }
 }
 
 registerGame(
