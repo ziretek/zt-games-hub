@@ -1,8 +1,53 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 const cacheNamespace = 'gamehub-v3';
 const buildVersion = Date.now().toString(36);
+const devServiceWorkerReset = `
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(
+      names
+        .filter(name => name.includes('gamehub') || name.includes('workbox') || name.includes('precache'))
+        .map(name => caches.delete(name)),
+    );
+    await self.clients.claim();
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of clients) {
+      const url = new URL(client.url);
+      url.searchParams.set('sw-reset', Date.now().toString());
+      client.navigate(url.href);
+    }
+    await self.registration.unregister();
+  })());
+});
+`;
+
+function devServiceWorkerResetPlugin(): Plugin {
+  return {
+    name: 'zt-dev-service-worker-reset',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const path = req.url?.split('?')[0];
+        if (path !== '/sw.js') {
+          next();
+          return;
+        }
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        res.end(devServiceWorkerReset);
+      });
+    },
+  };
+}
 
 export default defineConfig({
   root: '.',
@@ -23,6 +68,7 @@ export default defineConfig({
     globals: true,
   },
   plugins: [
+    devServiceWorkerResetPlugin(),
     VitePWA({
       registerType: 'prompt',
       injectRegister: null,

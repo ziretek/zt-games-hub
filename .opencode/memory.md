@@ -6,7 +6,7 @@
 
 ## Workflow Rules
 - **Auto-push:** After every successful commit on `main` branch, automatically run `git push origin main` — no HITL required unless the change touches critical infrastructure (DB schemas, monetization logic, economy math).
-- **Cache busting:** Every build automatically gets a unique timestamp-based cache version (`gamehub-assets-{buildVersion}`) in the PWA workbox config. Production builds auto-activate fresh service workers, while dev builds unregister stale localhost service workers and clear old Workbox/gamehub caches so users do not need manual cache clearing.
+- **Cache busting:** Every build automatically gets a unique timestamp-based cache version (`gamehub-assets-{buildVersion}`) in the PWA workbox config. Production builds auto-activate fresh service workers, while dev builds serve a `/sw.js` rescue worker that clears old Workbox/gamehub caches, unregisters stale localhost service workers, and reloads tabs so users do not need manual cache clearing.
 
 ## Past Failures
 - (none recorded)
