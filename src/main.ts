@@ -138,31 +138,18 @@ window.addEventListener('load', () => {
     });
   });
 
-  const searchInput = document.getElementById('hub-search-input') as HTMLInputElement | null;
+  const searchInput = document.getElementById('hub-search-input');
   const searchClear = document.getElementById('hub-search-clear');
   if (searchInput) {
-    searchInput.addEventListener('focus', () => {
-      document.querySelector('meta[name=viewport]')!.setAttribute('content',
-        'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-      setTimeout(() => window.scrollTo(0, 0), 50);
-    });
-    searchInput.addEventListener('blur', () => {
-      document.querySelector('meta[name=viewport]')!.setAttribute('content',
-        'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-    });
     searchInput.addEventListener('input', () => {
       applySearch();
-      if (searchClear) searchClear.classList.toggle('visible', searchInput.value.length > 0);
+      if (searchClear) searchClear.classList.toggle('visible', searchInput.textContent.length > 0);
     });
-  }
-  if (window.visualViewport) {
-    const preventZoom = () => { if (window.visualViewport!.scale > 1) document.body.style.transform = 'scale(1)'; };
-    window.visualViewport.addEventListener('resize', preventZoom);
   }
 
   if (searchClear && searchInput) {
     searchClear.addEventListener('click', () => {
-      searchInput.value = '';
+      searchInput.textContent = '';
       searchClear.classList.remove('visible');
       applySearch();
       searchInput.focus();

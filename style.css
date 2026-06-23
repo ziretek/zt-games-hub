@@ -246,6 +246,19 @@ button:active { transform: scale(0.95); }
     transition: all var(--transition);
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
+    min-height: 36px;
+    line-height: 1.4;
+    -webkit-user-modify: read-write-plaintext-only;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: text;
+}
+#hub-search-input:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-secondary);
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 #hub-search-input::placeholder { color: var(--text-secondary); opacity: 0.5; }

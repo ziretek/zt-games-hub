@@ -240,8 +240,8 @@ export function setFilter(filter: string): void {
 }
 
 export function applySearch(): void {
-  const input = document.getElementById('hub-search-input') as HTMLInputElement | null;
-  const q = input?.value?.toLowerCase().trim() || '';
+  const input = document.getElementById('hub-search-input');
+  const q = input?.textContent?.toLowerCase().trim() || '';
   document.querySelectorAll('.game-card').forEach(card => {
     const c = card as HTMLElement;
     const title = c.querySelector('.game-card-title')?.textContent?.toLowerCase() || '';
