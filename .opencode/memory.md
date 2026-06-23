@@ -73,3 +73,8 @@
 - ✅ **Viewport** — Added `maximum-scale=1.0` to prevent iOS auto-zoom
 - ✅ **Gomoku overflow** — Fixed 15×15 grid exceeding 380px viewport (gap 1→0px)
 - ✅ **Sprint** — Added `touch-action: manipulation`
+
+## Token Usage
+- (tracking started Jun 23 with Token-Optimizer agent)
+- Sprint: AI Bug Fixes & Mobile Redesign — estimated ~45 tasks, ~8K input, ~12K output, ~$0.02 total
+- Waste flags: 0 loops exceeded 3 strikes; 3 duplicate patterns (AI button wiring) caught late — could have reused Checkers fix pattern earlier
