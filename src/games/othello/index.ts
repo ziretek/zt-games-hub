@@ -80,27 +80,108 @@ export class OthelloGame implements Game {
     if (this.gameOver || this.currentPlayer !== 'black') return;
     const moves = this.getValidMoves('black');
     if (moves.length === 0) return;
-    let bestScore = -1;
+    const boardCopy = () => this.board.map(r => [...r]);
+    let bestScore = -Infinity;
     let bestMove = moves[0];
     for (const [r, c] of moves) {
-      let score = 0;
-      if ((r === 0 || r === 7) && (c === 0 || c === 7)) score += 20;
-      else if (r === 0 || r === 7 || c === 0 || c === 7) score += 8;
-      const opp = 'white';
-      const dirs = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-      let flips = 0;
-      for (const [dr, dc] of dirs) {
-        let nr = r + dr, nc = c + dc;
-        if (!this.inBounds(nr, nc) || this.board[nr][nc] !== opp) continue;
-        while (this.inBounds(nr, nc) && this.board[nr][nc] === opp) { flips++; nr += dr; nc += dc; }
-      }
-      score += flips;
-      if ((r === 0 || r === 7) && (c === 1 || c === 6)) score -= 10;
-      if ((r === 1 || r === 6) && (c === 0 || c === 7)) score -= 10;
-      if ((r === 1 || r === 6) && (c === 1 || c === 6)) score -= 8;
+      const sim = this.simulateMove(boardCopy(), r, c, 'black');
+      const score = this.minimax(sim, 3, -Infinity, Infinity, false, 'white');
       if (score > bestScore) { bestScore = score; bestMove = [r, c]; }
     }
     this.makeMove(bestMove[0], bestMove[1]);
+  }
+
+  private simulateMove(board: (string | null)[][], r: number, c: number, player: string): (string | null)[][] {
+    const opp = player === 'black' ? 'white' : 'black';
+    board[r][c] = player;
+    const dirs = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+    for (const [dr, dc] of dirs) {
+      let nr = r + dr, nc = c + dc;
+      if (!this.inBounds(nr, nc) || board[nr][nc] !== opp) continue;
+      const toFlip: [number, number][] = [];
+      while (this.inBounds(nr, nc) && board[nr][nc] === opp) { toFlip.push([nr, nc]); nr += dr; nc += dc; }
+      if (this.inBounds(nr, nc) && board[nr][nc] === player)
+        for (const [fr, fc] of toFlip) board[fr][fc] = player;
+    }
+    return board;
+  }
+
+  private minimax(board: (string | null)[][], depth: number, alpha: number, beta: number, isMaximizing: boolean, player: string): number {
+    const opp = player === 'black' ? 'white' : 'black';
+    const moves = this.getValidMovesOn(board, player);
+    if (depth === 0 || moves.length === 0) {
+      if (moves.length === 0 && this.getValidMovesOn(board, opp).length === 0) {
+        let b = 0, w = 0;
+        for (const row of board) for (const v of row) { if (v === 'black') b++; else if (v === 'white') w++; }
+        return b > w ? 10000 + depth : w > b ? -10000 - depth : 0;
+      }
+      return this.evaluateBoard(board);
+    }
+    const next = opp;
+    if (isMaximizing) {
+      let best = -Infinity;
+      for (const [r, c] of moves) {
+        const sim = this.simulateMove(board.map(row => [...row]), r, c, player);
+        const val = this.minimax(sim, depth - 1, alpha, beta, false, next);
+        best = Math.max(best, val);
+        alpha = Math.max(alpha, val);
+        if (beta <= alpha) break;
+      }
+      return best;
+    } else {
+      let best = Infinity;
+      for (const [r, c] of moves) {
+        const sim = this.simulateMove(board.map(row => [...row]), r, c, player);
+        const val = this.minimax(sim, depth - 1, alpha, beta, true, next);
+        best = Math.min(best, val);
+        beta = Math.min(beta, val);
+        if (beta <= alpha) break;
+      }
+      return best;
+    }
+  }
+
+  private getValidMovesOn(board: (string | null)[][], player: string): [number, number][] {
+    const moves: [number, number][] = [];
+    for (let r = 0; r < this.size; r++) for (let c = 0; c < this.size; c++)
+      if (!board[r][c] && this.isValidMoveOn(board, r, c, player)) moves.push([r, c]);
+    return moves;
+  }
+
+  private isValidMoveOn(board: (string | null)[][], r: number, c: number, player: string): boolean {
+    if (board[r][c]) return false;
+    const opp = player === 'black' ? 'white' : 'black';
+    const dirs = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+    for (const [dr, dc] of dirs) {
+      let nr = r + dr, nc = c + dc;
+      if (!this.inBounds(nr, nc) || board[nr][nc] !== opp) continue;
+      nr += dr; nc += dc;
+      while (this.inBounds(nr, nc) && board[nr][nc] === opp) { nr += dr; nc += dc; }
+      if (this.inBounds(nr, nc) && board[nr][nc] === player) return true;
+    }
+    return false;
+  }
+
+  private evaluateBoard(board: (string | null)[][]): number {
+    let score = 0;
+    const corners = [[0,0],[0,7],[7,0],[7,7]];
+    const cSquares = [[0,1],[0,6],[1,0],[1,7],[6,0],[6,7],[7,1],[7,6]];
+    const xSquares = [[1,1],[1,6],[6,1],[6,6]];
+    for (let r = 0; r < this.size; r++) for (let c = 0; c < this.size; c++) {
+      const v = board[r][c];
+      if (!v) continue;
+      const sign = v === 'black' ? 1 : -1;
+      let bonus = 1;
+      if (corners.some(([cr, cc]) => cr === r && cc === c)) bonus = 20;
+      else if (cSquares.some(([cr, cc]) => cr === r && cc === c)) bonus = 8;
+      else if (xSquares.some(([cr, cc]) => cr === r && cc === c)) bonus = 5;
+      else if (r === 0 || r === 7 || c === 0 || c === 7) bonus = 3;
+      score += sign * bonus;
+    }
+    const bMoves = this.getValidMovesOn(board, 'black').length;
+    const wMoves = this.getValidMovesOn(board, 'white').length;
+    score += (bMoves - wMoves) * 0.5;
+    return score;
   }
 
   render(): void {

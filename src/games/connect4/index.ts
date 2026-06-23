@@ -99,19 +99,89 @@ export class Connect4Game implements Game {
 
   aiMove(): void {
     if (this.gameOver || this.currentPlayer !== 'yellow') return;
-    for (let c = 0; c < this.COLS; c++) {
-      const r = this.getDropRow(c); if (r < 0) continue;
-      this.board[r][c] = 'yellow';
-      if (this.checkWin(r, c, 'yellow')) { this.board[r][c] = null; this.drop(c); return; }
-      this.board[r][c] = null;
+    const simBoard = (b: (string | null)[][]) => b.map(r => [...r]);
+    const copy = simBoard(this.board);
+    const colOrder = [3, 2, 4, 1, 5, 0, 6];
+    let bestScore = -Infinity;
+    let bestCol = -1;
+    for (const c of colOrder) {
+      const r = this.getDropRowIn(c, copy); if (r < 0) continue;
+      copy[r][c] = 'yellow';
+      if (this.checkWin(r, c, 'yellow')) { copy[r][c] = null; this.drop(c); return; }
+      const opp = this.getDropRowIn(c, copy);
+      if (opp >= 0) { copy[opp][c] = 'red'; if (this.checkWin(opp, c, 'red')) { copy[opp][c] = null; copy[r][c] = null; continue; } copy[opp][c] = null; }
+      const score = this.minimax(copy, 4, -Infinity, Infinity, false);
+      copy[r][c] = null;
+      if (score > bestScore) { bestScore = score; bestCol = c; }
     }
+    if (bestCol >= 0) this.drop(bestCol);
+  }
+
+  private getDropRowIn(col: number, board: (string | null)[][]): number {
+    let r = this.ROWS - 1; while (r >= 0 && board[r][col] !== null) r--;
+    return r;
+  }
+
+  private minimax(board: (string | null)[][], depth: number, alpha: number, beta: number, isMaximizing: boolean): number {
     for (let c = 0; c < this.COLS; c++) {
-      const r = this.getDropRow(c); if (r < 0) continue;
-      this.board[r][c] = 'red';
-      if (this.checkWin(r, c, 'red')) { this.board[r][c] = null; this.drop(c); return; }
-      this.board[r][c] = null;
+      const r = this.getDropRowIn(c, board); if (r < 0) continue;
+      board[r][c] = isMaximizing ? 'yellow' : 'red';
+      if (this.checkWinOn(r, c, board, isMaximizing ? 'yellow' : 'red')) { board[r][c] = null; return isMaximizing ? 1000 + depth : -1000 - depth; }
+      board[r][c] = null;
     }
-    for (const c of [3, 2, 4, 1, 5, 0, 6]) { if (this.board[0][c] === null) { this.drop(c); return; } }
+    if (depth === 0) return this.evaluate(board);
+    const colOrder = [3, 2, 4, 1, 5, 0, 6];
+    if (isMaximizing) {
+      let best = -Infinity;
+      for (const c of colOrder) {
+        const r = this.getDropRowIn(c, board); if (r < 0) continue;
+        board[r][c] = 'yellow';
+        const val = this.minimax(board, depth - 1, alpha, beta, false);
+        board[r][c] = null;
+        best = Math.max(best, val);
+        alpha = Math.max(alpha, val);
+        if (beta <= alpha) break;
+      }
+      return best;
+    } else {
+      let best = Infinity;
+      for (const c of colOrder) {
+        const r = this.getDropRowIn(c, board); if (r < 0) continue;
+        board[r][c] = 'red';
+        const val = this.minimax(board, depth - 1, alpha, beta, true);
+        board[r][c] = null;
+        best = Math.min(best, val);
+        beta = Math.min(beta, val);
+        if (beta <= alpha) break;
+      }
+      return best;
+    }
+  }
+
+  private evaluate(board: (string | null)[][]): number {
+    let score = 0;
+    for (let c = 0; c < this.COLS; c++) {
+      for (let r = 0; r < this.ROWS; r++) {
+        if (board[r][c] === 'yellow') { score += 1 + (c === 3 ? 0.5 : c === 2 || c === 4 ? 0.3 : 0); }
+        else if (board[r][c] === 'red') { score -= 1 + (c === 3 ? 0.5 : c === 2 || c === 4 ? 0.3 : 0); }
+      }
+    }
+    return score;
+  }
+
+  private checkWinOn(row: number, col: number, board: (string | null)[][], player: string): boolean {
+    const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+    for (const [dr, dc] of dirs) {
+      let count = 1;
+      for (const sign of [-1, 1]) {
+        let r = row + dr * sign, c = col + dc * sign;
+        while (r >= 0 && r < this.ROWS && c >= 0 && c < this.COLS && board[r][c] === player) {
+          count++; r += dr * sign; c += dc * sign;
+        }
+      }
+      if (count >= 4) return true;
+    }
+    return false;
   }
 
   private _scheduleAI(): void { this._aiTimer = setTimeout(() => { this._aiTimer = null; this.aiMove(); }, 300); }

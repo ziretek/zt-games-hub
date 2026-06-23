@@ -562,7 +562,7 @@ export class ChessGame implements Game {
     for (const move of ordered) {
       const result = this.makeMove(this.board, move, this.enPassantTarget, this.castlingRights);
       if (this.inCheck(result.board, 'b')) continue;
-      const score = this.minimax(result.board, 3, alpha, beta, false, 'w', result.ep, result.cr);
+      const score = this.minimax(result.board, 4, alpha, beta, false, 'w', result.ep, result.cr);
       if (score > bestScore) {
         bestScore = score;
         bestMove = move;
