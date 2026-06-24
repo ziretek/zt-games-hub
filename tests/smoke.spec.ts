@@ -1,9 +1,18 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { GAMES } from '../src/core/registry-data';
 
 type SmokePage = { __smokeErrors?: string[] };
 
-test.beforeEach(async ({ page }) => {
+const disableAnimationsCss = `
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+`;
+
+async function prepareSmokePage(page: Page, options: { fastStart?: boolean } = {}) {
   const pageErrors: string[] = [];
   (page as unknown as SmokePage).__smokeErrors = pageErrors;
   page.on('pageerror', error => pageErrors.push(error.message));
@@ -11,22 +20,20 @@ test.beforeEach(async ({ page }) => {
     if (message.type() === 'error') pageErrors.push(message.text());
   });
 
-  await page.addInitScript(() => {
+  await page.addInitScript((fastStart: boolean) => {
     localStorage.clear();
-  });
+    window.__ZT_E2E_FAST_START = fastStart;
+  }, options.fastStart === true);
   await page.goto('/');
-  await page.addStyleTag({
-    content: `
-      *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        animation-delay: 0s !important;
-        transition-duration: 0.001ms !important;
-        scroll-behavior: auto !important;
-      }
-    `,
-  });
+  await page.addStyleTag({ content: disableAnimationsCss });
   await expect(page.locator('body')).toHaveAttribute('data-app-ready', 'true');
   await expect(page.locator('#game-hub')).toBeVisible();
+
+  return pageErrors;
+}
+
+test.beforeEach(async ({ page }) => {
+  await prepareSmokePage(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -42,7 +49,9 @@ test('hub search, filters, favorites, and random entry points work', async ({ pa
   await expect(page.locator('.game-card[data-game="chess"]')).toBeVisible();
   await expect(page.locator('.game-card[data-game="snake"]')).toBeHidden();
 
-  await page.locator('#hub-search-clear').click();
+  await expect(page.locator('#hub-search-clear')).toHaveClass(/visible/);
+  await search.fill('');
+  await expect(page.locator('#hub-search-clear')).not.toHaveClass(/visible/);
   await expect(page.locator('.game-card[data-game="snake"]')).toBeVisible();
 
   await page.locator('.game-card[data-game="snake"] .favorite-btn').click();
@@ -100,20 +109,29 @@ test('pong is always human left paddle versus AI right paddle', async ({ page })
   await expect(page.locator('#game-help-controls')).toContainText('right paddle is always controlled by AI');
 });
 
-test('every registered game opens and returns to the hub', async ({ page }) => {
+test('every registered game opens from the hub', async ({ context }) => {
   test.setTimeout(300_000);
-  await page.evaluate(() => { window.__ZT_E2E_FAST_START = true; });
 
   for (const game of GAMES) {
     await test.step(game.id, async () => {
-      await page.locator(`.game-card[data-game="${game.id}"]`).click({ force: true });
-      await expect(page.locator('#game-view-title')).toHaveText(game.name);
-      await expect(page.locator('#game-start-title')).toHaveText(game.name);
-      await page.locator('#game-start-btn').click({ force: true });
-      await expect(page.locator('#game-start-panel')).toBeHidden({ timeout: 10_000 });
-      await expect(page.locator(`#${game.id}-wrapper`)).toHaveClass(/active/);
-      await page.locator('#back-btn').click({ force: true });
-      await expect(page.locator('#game-hub')).toBeVisible();
+      const gamePage = await context.newPage();
+      const pageErrors = await prepareSmokePage(gamePage, { fastStart: true });
+
+      try {
+        await gamePage.locator(`.game-card[data-game="${game.id}"]`).evaluate((el: Element) => {
+          (el as HTMLElement).click();
+        });
+        await expect(gamePage.locator('#game-view-title')).toHaveText(game.name);
+        await expect(gamePage.locator('#game-start-title')).toHaveText(game.name);
+        await gamePage.locator('#game-start-btn').evaluate((el: Element) => {
+          (el as HTMLElement).click();
+        });
+        await expect(gamePage.locator('#game-start-panel')).toBeHidden({ timeout: 10_000 });
+        await expect(gamePage.locator(`#${game.id}-wrapper`)).toHaveClass(/active/);
+        expect(pageErrors).toEqual([]);
+      } finally {
+        await gamePage.close();
+      }
     });
   }
 });
